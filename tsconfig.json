@@ -22,7 +22,8 @@
     "lib": ["esnext", "dom"],
     "paths": {
       "src/*": ["src/*"],
+      "test/*": ["test/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "test"],
 }
