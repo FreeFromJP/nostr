@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "dev": "nodemon -r esm src/index.ts",
-    "dev3": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
-    "dev2": "nodemon --exec ts-node src/index.ts"
+    "dev": "nodemon -I --exec node --experimental-specifier-resolution=node  --loader ts-node/esm ./src/index.ts"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.0",
