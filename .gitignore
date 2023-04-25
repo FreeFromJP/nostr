@@ -29,6 +29,7 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/*
+!.vscode/extensions.json
 
 # npm
 package-lock.json
