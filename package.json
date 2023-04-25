@@ -1,8 +1,8 @@
 {
   "name": "@freefrom/nostr",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -36,5 +36,10 @@
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typescript": "^5.0.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeFromJP/nostr.git"
+  },
+  "author": "FreeFromJP"
 }
