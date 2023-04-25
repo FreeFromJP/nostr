@@ -12,6 +12,7 @@
     "@rollup/plugin-typescript": "^11.1.0",
     "esm": "^3.2.25",
     "nodemon": "^2.0.22",
+    "nostr-tools": "^1.10.1",
     "rollup": "^3.21.0",
     "rollup-plugin-uglify": "^6.0.4",
     "ts-node": "^10.9.1",
