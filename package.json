@@ -1,0 +1,23 @@
+{
+  "name": "@freefrom/nostr",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "dev": "nodemon -r esm src/index.ts",
+    "dev3": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
+    "dev2": "nodemon --exec ts-node src/index.ts"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.0",
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.22",
+    "rollup": "^3.21.0",
+    "rollup-plugin-uglify": "^6.0.4",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.4"
+  }
+}

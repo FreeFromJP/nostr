@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "esnext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "strict": true,
+    "declaration": true,
+
+    "allowJs": true,
+    "noImplicitAny": true,
+    "noImplicitThis": false,
+
+    "noUnusedLocals": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "lib": ["esnext", "dom"],
+    "paths": {
+      "src/*": ["src/*"],
+    }
+  },
+  "include": ["src"],
+}
