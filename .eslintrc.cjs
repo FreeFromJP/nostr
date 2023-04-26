@@ -21,5 +21,6 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'simple-import-sort/imports': 'error',
     'unused-imports/no-unused-imports': 'error',
+    '@typescript-eslint/no-namespace': 'off',
   },
 }
