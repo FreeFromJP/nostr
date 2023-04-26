@@ -1,4 +1,5 @@
-import { getEventHash, validateEvent, verifySignature, signEvent} from 'nostr-tools'
+import { getEventHash, signEvent, validateEvent, verifySignature } from 'nostr-tools'
+
 import { Keys } from '../account/Keys'
 
 //for reference
@@ -28,7 +29,9 @@ export type Event = {
     sig?: string
 }
 
-export interface mod {(event: BaseEvent, opts: any): void}
+export interface mod {
+    (event: BaseEvent, opts: any): void
+}
 
 //this can be used to build new event or receive incoming event
 export class BaseEvent {
@@ -63,8 +66,8 @@ export class BaseEvent {
     }
 
     hash() {
-        if(this.id == '') this.id = getEventHash(this)  
-        return this.id 
+        if (this.id == '') this.id = getEventHash(this)
+        return this.id
     }
 
     modify(modFn: mod, opts: any) {
@@ -72,11 +75,11 @@ export class BaseEvent {
     }
 
     signByKey(keys: Keys) {
-        if(keys.canSign()){
+        if (keys.canSign()) {
             this.pubkey = keys.pubkey
             this.hash()
             this.sig = signEvent(this, keys.privkey)
-        }else{
+        } else {
             throw new Error('cannot get signed')
         }
     }
@@ -84,22 +87,23 @@ export class BaseEvent {
 
 export function parseEvent(event: Event): BaseEvent {
     //check if all field exists
-    let flag = event.kind != null
-            && event.content != null
-            && event.pubkey != null
-            && event.id != null
-            && event.tags != null
-            && (event.created_at != null || event.createdAt != null)
-            && event.sig != null
-    if(flag){
+    const flag =
+        event.kind != null &&
+        event.content != null &&
+        event.pubkey != null &&
+        event.id != null &&
+        event.tags != null &&
+        (event.created_at != null || event.createdAt != null) &&
+        event.sig != null
+    if (flag) {
         const eventObj = new BaseEvent(event)
         console.log(eventObj)
-        if(eventObj.validate()) {
+        if (eventObj.validate()) {
             return eventObj
-        }else {
+        } else {
             throw new Error('varification failed')
         }
-    }else{
+    } else {
         throw new Error('event has missing fields')
     }
 }

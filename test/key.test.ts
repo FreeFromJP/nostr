@@ -1,6 +1,6 @@
 import { Keys } from 'src/core/account/Keys'
 
-import { settings } from './settings'
+import { settings } from '../data/settings'
 
 test('Test priv key paste', () => {
     const keys = new Keys(settings.privkeyEncoded)

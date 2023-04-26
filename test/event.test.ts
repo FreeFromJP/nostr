@@ -1,13 +1,13 @@
 import { Keys } from 'src/core/account/Keys'
 import { BaseEvent, Event } from 'src/core/event/Event'
-import { settings } from './settings'
-import { pushEvent } from './utils'
 
+import { settings } from '../data/settings'
+import { pushEvent } from '../data/utils'
 
 const Opts1: Event = {
     pubkey: settings.pubkey,
     kind: 1,
-    content: 'Test Post: 8'
+    content: 'Test Post: 8',
 }
 
 const event = new BaseEvent(Opts1)
@@ -29,5 +29,3 @@ test('Test event publish', async () => {
     console.log(event)
     await pushEvent(event)
 })
-
-

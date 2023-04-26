@@ -1,8 +1,10 @@
-import WebSocket from 'ws'
-import { BaseEvent } from 'src/core/event/Event'
 import { relayInit } from 'nostr-tools'
+import { BaseEvent } from 'src/core/event/Event'
+import WebSocket from 'ws'
+
 import { settings } from './settings'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 global.WebSocket = WebSocket
 
