@@ -4,37 +4,37 @@ export const PUBKEY_PREFIX = 'npub'
 export const PRIKEY_PREFIX = 'nsec'
 
 export class Keys {
-    pubkey: string
-    privkey: string
+    pubkeyRaw: string
+    privkeyRaw: string
     //npub or nsec
     constructor(keyString?: string) {
         if (keyString != null) {
             if (keyString.length != 63) throw 'key length invalid'
             if (keyString.startsWith(PUBKEY_PREFIX)) {
-                this.pubkey = nip19.decode(keyString).data as string
-                this.privkey = ''
+                this.pubkeyRaw = nip19.decode(keyString).data as string
+                this.privkeyRaw = ''
             } else if (keyString.startsWith(PRIKEY_PREFIX)) {
-                this.privkey = nip19.decode(keyString).data as string
-                this.pubkey = getPublicKey(this.privkey)
+                this.privkeyRaw = nip19.decode(keyString).data as string
+                this.pubkeyRaw = getPublicKey(this.privkeyRaw)
             } else {
                 throw 'undefine key format'
             }
         } else {
             //generate key for new user
-            this.privkey = generatePrivateKey()
-            this.pubkey = getPublicKey(this.privkey)
+            this.privkeyRaw = generatePrivateKey()
+            this.pubkeyRaw = getPublicKey(this.privkeyRaw)
         }
     }
 
-    encodedPubkey() {
-        return nip19.npubEncode(this.pubkey)
+    pubkey() {
+        return nip19.npubEncode(this.pubkeyRaw)
     }
 
-    encodedPrivkey() {
-        return this.privkey != '' ? nip19.nsecEncode(this.privkey) : ''
+    privkey() {
+        return this.privkeyRaw != '' ? nip19.nsecEncode(this.privkeyRaw) : ''
     }
 
     canSign() {
-        return this.privkey != ''
+        return this.privkeyRaw != ''
     }
 }

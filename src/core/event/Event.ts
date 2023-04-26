@@ -29,6 +29,17 @@ export type Event = {
     sig?: string
 }
 
+export type EventFinalized = {
+    kind: number
+    content: string
+    pubkey: string
+    id: string
+    tags: string[][]
+    created_at?: number
+    createdAt?: number
+    sig: string
+}
+
 export interface mod {
     (event: BaseEvent, opts: any): void
 }
@@ -76,34 +87,22 @@ export class BaseEvent {
 
     signByKey(keys: Keys) {
         if (keys.canSign()) {
-            this.pubkey = keys.pubkey
+            this.pubkey = keys.pubkeyRaw
             this.hash()
-            this.sig = signEvent(this, keys.privkey)
+            this.sig = signEvent(this, keys.privkeyRaw)
         } else {
             throw new Error('cannot get signed')
         }
     }
 }
 
-export function parseEvent(event: Event): BaseEvent {
-    //check if all field exists
-    const flag =
-        event.kind != null &&
-        event.content != null &&
-        event.pubkey != null &&
-        event.id != null &&
-        event.tags != null &&
-        (event.created_at != null || event.createdAt != null) &&
-        event.sig != null
-    if (flag) {
-        const eventObj = new BaseEvent(event)
-        console.log(eventObj)
-        if (eventObj.validate()) {
-            return eventObj
-        } else {
-            throw new Error('varification failed')
-        }
+export function parseEvent(event: EventFinalized): BaseEvent {
+    if (event.createdAt == null && event.created_at == null) throw new Error('parse failed: no timestamp')
+    const eventObj = new BaseEvent(event)
+    console.log(eventObj)
+    if (eventObj.validate()) {
+        return eventObj
     } else {
-        throw new Error('event has missing fields')
+        throw new Error('varification failed')
     }
 }

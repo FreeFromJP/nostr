@@ -1,8 +1,8 @@
 import { Keys } from 'src/core/account/Keys'
 import { BaseEvent, Event } from 'src/core/event/Event'
 
-import { settings } from '../data/settings'
-import { pushEvent } from '../data/utils'
+import { settings } from '../testHelper/settings'
+import { pushEvent } from '../testHelper/utils'
 
 const Opts1: Event = {
     pubkey: settings.pubkey,

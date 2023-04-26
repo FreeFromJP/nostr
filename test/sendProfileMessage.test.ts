@@ -2,8 +2,8 @@ import { Keys } from 'src/core/account/Keys'
 import { BaseEvent } from 'src/core/event/Event'
 import { MetaOpts, toMetadata } from 'src/core/event/EventBuilder'
 
-import { settings } from '../data/settings'
-import { pushEvent } from '../data/utils'
+import { settings } from '../testHelper/settings'
+import { pushEvent } from '../testHelper/utils'
 
 const meta: MetaOpts = {
     name: 'The God Emperor',

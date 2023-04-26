@@ -25,5 +25,5 @@
       "test/*": ["test/*"]
     }
   },
-  "include": ["src", "test"],
+  "include": ["src", "test", "testHelper/utils.ts", "testHelper/settings.ts"],
 }

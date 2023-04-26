@@ -10,6 +10,7 @@ export interface MetaOpts {
     website?: string
     nip05?: string
     lud06?: string
+    lud16?: string
 }
 
 export function toMetadata(event: BaseEvent, metadata: MetaOpts) {
