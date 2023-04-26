@@ -1,4 +1,5 @@
-import { getEventHash, validateEvent, verifySignature } from 'nostr-tools'
+import { getEventHash, validateEvent, verifySignature, signEvent} from 'nostr-tools'
+import { Keys } from '../account/Keys'
 
 //for reference
 export const KnownEventKind = {
@@ -16,10 +17,10 @@ export const KnownEventKind = {
     BADGE_DEFINATION: 30009,
 }
 
-export interface EventOpts {
-    pubkey: string
-    kind: number
-    content: string
+export type EventOpts = {
+    kind?: number
+    content?: string
+    pubkey?: string
     id?: string
     tags?: string[][]
     created_at?: number
@@ -27,6 +28,9 @@ export interface EventOpts {
     sig?: string
 }
 
+export interface mod {(event: Event, opts: any): void}
+
+//this can be used to build new event or receive incoming event
 export class Event {
     id: string
     pubkey: string
@@ -38,11 +42,11 @@ export class Event {
 
     constructor(opts: EventOpts) {
         this.id = opts.id || ''
-        this.pubkey = opts.pubkey
+        this.pubkey = opts.pubkey || ''
         this.created_at = opts.createdAt || opts.created_at || Math.floor(Date.now() / 1000)
-        this.kind = opts.kind
+        this.kind = opts.kind || 1
         this.tags = opts.tags || []
-        this.content = opts.content
+        this.content = opts.content || ''
         this.sig = opts.sig || ''
     }
 
@@ -59,7 +63,21 @@ export class Event {
     }
 
     hash() {
-        this.id = getEventHash(this)
-        return this.id
+        if(this.id == '') this.id = getEventHash(this)  
+        return this.id 
+    }
+
+    modify(modFn: mod, opts: any) {
+        modFn(this, opts)
+    }
+
+    signByKey(keys: Keys) {
+        if(keys.canSign()){
+            this.pubkey = keys.pubkey
+            this.hash()
+            this.sig = signEvent(this, keys.privkey)
+        }else{
+            throw new Error('cannot get signed')
+        }
     }
 }

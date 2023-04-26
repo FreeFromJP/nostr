@@ -1,6 +1,4 @@
-import { generatePrivateKey, getPublicKey, nip19, signEvent } from 'nostr-tools'
-
-import { Event } from '../event/Event'
+import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
 
 export const PUBKEY_PREFIX = 'npub'
 export const PRIKEY_PREFIX = 'nsec'
@@ -38,15 +36,5 @@ export class Keys {
 
     canSign() {
         return this.privkey != ''
-    }
-
-    async sign(event: Event) {
-        event.hash()
-        if (this.canSign()) {
-            event.sig = signEvent(event, this.privkey)
-        } else {
-            throw new Error('cannot sign')
-        }
-        return event
     }
 }
