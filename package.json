@@ -6,7 +6,7 @@
     "type": "module",
     "scripts": {
         "build": "rollup -c rollup.config.js",
-        "dev": "nodemon -I --exec node --experimental-specifier-resolution=node  --loader ts-node/esm ./src/index.ts",
+        "dev": "nodemon -I --exec node --experimental-specifier-resolution=node  --loader ts-node/esm src/index.ts",
         "prepare": "husky install",
         "test-watch": "jest --watch --config jestconfig.json",
         "test": "jest --config jestconfig.json"
@@ -44,6 +44,7 @@
         "ts-node": "^10.9.1",
         "tslib": "^2.5.0",
         "typescript": "^5.0.4",
+        "websocket-polyfill": "^0.0.3",
         "ws": "^8.13.0"
     },
     "repository": {
