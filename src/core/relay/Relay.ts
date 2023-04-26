@@ -20,6 +20,7 @@ export class Subscription extends Observable {
     closeAfter: CloseAfter
 
     closed = false
+    eoseSeen = false
 
     close() {
         if (this.closed) return
