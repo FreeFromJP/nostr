@@ -1,5 +1,6 @@
 import { KnownEventKind, Event } from './Event'
 
+//kind-0 metadata
 export interface MetaOpts {
     name: string,
     display_name?: string,
@@ -11,8 +12,14 @@ export interface MetaOpts {
     lud06?: string,
 }
 
-//kind-0
 export function toMetadata(event: Event, metadata: MetaOpts){
     event.kind = KnownEventKind.METADATA
     event.content = JSON.stringify(metadata)
 }
+
+//kind-1 short text note
+export function toNote(event: Event, content: string) {
+    event.kind = KnownEventKind.NOTE
+    event.content = content
+}
+
