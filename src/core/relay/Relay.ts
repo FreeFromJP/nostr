@@ -1,6 +1,7 @@
 import type { Event, Filter } from 'nostr-tools'
-import { BaseEvent } from 'src/core/event/Event'
-import Observable from 'src/core/relay/Observable'
+
+import { BaseEvent } from '../event/Event'
+import Observable from './Observable'
 
 export const enum CloseAfter {
     SINGLE = 'single',
@@ -223,9 +224,6 @@ class ReconnectingWebSocket extends Observable {
         }
 
         this.reconnectAfter = this.opts.reconnectAfter
-
-        window.addEventListener('online', this.connect.bind(this))
-        window.addEventListener('focus', this.connect.bind(this))
     }
 
     url = ''
@@ -238,7 +236,7 @@ class ReconnectingWebSocket extends Observable {
     }
     socket: WebSocket | null = null
     disconnected = false
-    reconnectAfter = 0
+    reconnectAfter = 3000
     reconnectTimer: ReturnType<typeof setTimeout> | null = null
 
     connect() {
@@ -277,7 +275,10 @@ class ReconnectingWebSocket extends Observable {
     }
 
     close() {
-        if (this.socket) this.socket.close()
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            console.log('this.socket.close', this.socket.close)
+            this.socket.close()
+        }
         this.socket = null
     }
 
@@ -298,6 +299,7 @@ class ReconnectingWebSocket extends Observable {
 
     onOpen() {
         this.emit('open', this)
+        console.log('Connected to relay', this.url)
         this.reconnectAfter = this.opts.reconnectAfter
     }
 
