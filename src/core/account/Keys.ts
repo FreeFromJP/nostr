@@ -33,7 +33,7 @@ export class Keys {
     }
 
     encodedPrivkey() {
-        return nip19.nsecEncode(this.privkey)
+        return this.privkey != '' ? nip19.nsecEncode(this.privkey) : ''
     }
 
     canSign() {
