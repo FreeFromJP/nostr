@@ -5,9 +5,6 @@ namespace Observable {
 }
 
 class Observable {
-    constructor() {
-    }
-
     listeners: Observable.Listeners = {}
 
     on(event: string, callback: Observable.Callback) {

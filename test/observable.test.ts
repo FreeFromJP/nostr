@@ -1,4 +1,4 @@
-import Observable from 'src/Observable'
+import Observable from 'src/core/relay/Observable'
 
 describe('Observable', () => {
     it('should add listener', () => {
