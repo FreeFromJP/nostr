@@ -1,9 +1,11 @@
-import { Event, generatePrivateKey, getEventHash, getPublicKey, nip19, signEvent } from 'nostr-tools'
+import { generatePrivateKey, getPublicKey, nip19, signEvent } from 'nostr-tools'
+
+import { Event } from '../event/Event'
 
 export const PUBKEY_PREFIX = 'npub'
 export const PRIKEY_PREFIX = 'nsec'
 
-export class keys {
+export class Keys {
     pubkey: string
     privkey: string
     //npub or nsec
@@ -26,12 +28,20 @@ export class keys {
         }
     }
 
+    encodedPubkey() {
+        return nip19.npubEncode(this.pubkey)
+    }
+
+    encodedPrivkey() {
+        return nip19.nsecEncode(this.privkey)
+    }
+
     canSign() {
         return this.privkey != ''
     }
 
     async sign(event: Event) {
-        event.id = getEventHash(event)
+        event.hash()
         if (this.canSign()) {
             event.sig = signEvent(event, this.privkey)
         } else {
