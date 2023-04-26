@@ -1,5 +1,5 @@
 import { Keys } from 'src/core/account/Keys'
-import { Event } from 'src/core/event/Event'
+import { BaseEvent } from 'src/core/event/Event'
 import { toMetadata, MetaOpts } from 'src/core/event/EventBuilder'
 import { settings } from './settings'
 import { pushEvent } from './utils'
@@ -14,7 +14,7 @@ const meta: MetaOpts = {
 
 test('Test send profile', async () => {
     const keys = new Keys(settings.privkeyEncoded)
-    const event = new Event({})
+    const event = new BaseEvent({})
     event.modify(toMetadata, meta)
     event.signByKey(keys)
     console.log(event)

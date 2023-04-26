@@ -1,4 +1,4 @@
-import { KnownEventKind, Event } from './Event'
+import { KnownEventKind, BaseEvent } from './Event'
 
 //kind-0 metadata
 export interface MetaOpts {
@@ -12,13 +12,13 @@ export interface MetaOpts {
     lud06?: string,
 }
 
-export function toMetadata(event: Event, metadata: MetaOpts){
+export function toMetadata(event: BaseEvent, metadata: MetaOpts){
     event.kind = KnownEventKind.METADATA
     event.content = JSON.stringify(metadata)
 }
 
 //kind-1 short text note
-export function toNote(event: Event, content: string) {
+export function toNote(event: BaseEvent, content: string) {
     event.kind = KnownEventKind.NOTE
     event.content = content
 }

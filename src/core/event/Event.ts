@@ -17,7 +17,7 @@ export const KnownEventKind = {
     BADGE_DEFINATION: 30009,
 }
 
-export type EventOpts = {
+export type Event = {
     kind?: number
     content?: string
     pubkey?: string
@@ -28,10 +28,10 @@ export type EventOpts = {
     sig?: string
 }
 
-export interface mod {(event: Event, opts: any): void}
+export interface mod {(event: BaseEvent, opts: any): void}
 
 //this can be used to build new event or receive incoming event
-export class Event {
+export class BaseEvent {
     id: string
     pubkey: string
     created_at: number
@@ -40,11 +40,11 @@ export class Event {
     content: string
     sig: string
 
-    constructor(opts: EventOpts) {
+    constructor(opts: Event) {
         this.id = opts.id || ''
         this.pubkey = opts.pubkey || ''
         this.created_at = opts.createdAt || opts.created_at || Math.floor(Date.now() / 1000)
-        this.kind = opts.kind || 1
+        this.kind = opts.kind || 0
         this.tags = opts.tags || []
         this.content = opts.content || ''
         this.sig = opts.sig || ''
@@ -79,5 +79,27 @@ export class Event {
         }else{
             throw new Error('cannot get signed')
         }
+    }
+}
+
+export function parseEvent(event: Event): BaseEvent {
+    //check if all field exists
+    let flag = event.kind != null
+            && event.content != null
+            && event.pubkey != null
+            && event.id != null
+            && event.tags != null
+            && (event.created_at != null || event.createdAt != null)
+            && event.sig != null
+    if(flag){
+        const eventObj = new BaseEvent(event)
+        console.log(eventObj)
+        if(eventObj.validate()) {
+            return eventObj
+        }else {
+            throw new Error('varification failed')
+        }
+    }else{
+        throw new Error('event has missing fields')
     }
 }
