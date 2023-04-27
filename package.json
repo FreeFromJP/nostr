@@ -1,7 +1,8 @@
 {
     "name": "@freefrom/nostr",
     "version": "0.1.0",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "license": "Apache-2.0",
     "type": "module",
     "scripts": {
@@ -12,7 +13,7 @@
         "test": "jest --config jestconfig.json"
     },
     "lint-staged": {
-        "*.{js,ts}": [
+        "{src,test,testHelper}/**/*.{js,ts}": [
             "eslint --fix",
             "prettier --write"
         ]
@@ -51,7 +52,9 @@
         "type": "git",
         "url": "git+https://github.com/FreeFromJP/nostr.git"
     },
+    "homepage": "https://github.com/FreeFromJP/nostr",
     "author": "FreeFromJP",
+    "files": ["dist"],
     "dependencies": {
         "nostr-tools": "^1.10.1"
     }

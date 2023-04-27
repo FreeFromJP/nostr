@@ -1,11 +1,19 @@
+/* eslint no-use-before-define: 0 */
 import typescript from '@rollup/plugin-typescript';
 import {uglify} from 'rollup-plugin-uglify'
 
 export default {
   input: 'src/index.ts',
   output: {
-      file: 'dist/src/index.js',
+      file: 'dist/index.js',
       format: 'es'
   },
-  plugins: [typescript({ module: 'esnext' }), uglify()]
+  plugins: [typescript({
+    module: 'esnext',
+    exclude: ['node_modules/**', 'test/*', 'testHelper/*']
+   }), uglify({
+    compress: {
+      drop_console: true
+    }
+   })]
 };
