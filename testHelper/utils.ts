@@ -10,7 +10,7 @@ global.WebSocket = WebSocket
 
 export async function pushEvent(event: BaseEvent) {
     //this is a simple push
-    const relay = relayInit(settings.relay1)
+    const relay = relayInit(settings.relays[0])
     relay.on('connect', () => {
         console.log(`connected to ${relay.url}`)
     })
@@ -20,4 +20,8 @@ export async function pushEvent(event: BaseEvent) {
     await relay.connect()
     relay.publish(event)
     relay.close()
+}
+
+export async function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
 }
