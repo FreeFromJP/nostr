@@ -41,7 +41,7 @@ export type EventFinalized = {
 }
 
 export interface mod {
-    (event: BaseEvent, opts: any): void
+    (event: BaseEvent, ...opts: any): void
 }
 
 //this can be used to build new event or receive incoming event
@@ -81,8 +81,9 @@ export class BaseEvent {
         return this.id
     }
 
-    modify(modFn: mod, opts: any) {
-        modFn(this, opts)
+    modify(modFn: mod, ...opts: any) {
+        modFn(this, ...opts)
+        return this
     }
 
     signByKey(keys: Keys) {

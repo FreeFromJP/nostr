@@ -20,7 +20,7 @@ export default class Profile {
         verified?: boolean
     }
 
-    constructor(pubkey: string, lastUpdatedAt: number, metadata: MetaOpts) {
+    constructor(pubkey: string, metadata: MetaOpts, lastUpdatedAt: number) {
         this.pubkey = pubkey
         this.lastUpdatedAt = lastUpdatedAt
         this.name = metadata.name
@@ -37,8 +37,8 @@ export default class Profile {
     static from(event: EventFinalized) {
         if (event.kind != KnownEventKind.METADATA) throw new Error('kind-1 event expected')
         const eventObj = parseEvent(event)
-        const metadata = JSON.parse(event.content)
-        return new Profile(nip19.npubEncode(eventObj.pubkey), eventObj.created_at, metadata)
+        const metadata = JSON.parse(event.content) as MetaOpts
+        return new Profile(nip19.npubEncode(eventObj.pubkey), metadata, eventObj.created_at)
     }
 
     async isNip05Verified() {
