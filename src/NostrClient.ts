@@ -10,12 +10,12 @@ export default class NostrClient {
     pool: SimplePool
     relays: string[] = []
 
-    close(relays?: string[]): void {
+    close(relays?: string[]) {
         const relaysClosed = relays || this.relays
         const newRelays = this.relays.filter((relay) => !relaysClosed.includes(relay))
         this.relays = newRelays
-
-        return this.pool.close(relaysClosed)
+        this.pool.close(relaysClosed)
+        return this.relays
     }
 
     subscribe(filters: Filter[], opts?: SubscriptionOptions): Sub {
@@ -29,7 +29,6 @@ export default class NostrClient {
     fetch(filters: Filter[], opts?: SubscriptionOptions): Promise<Event[]> {
         return this.pool.list(this.relays, filters, opts)
     }
-    list = this.fetch
 
     seenOn(id: string): string[] {
         return this.pool.seenOn(id)

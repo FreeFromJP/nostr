@@ -1,6 +1,6 @@
 import 'websocket-polyfill'
 
-import { relayInit } from 'nostr-tools'
+import { relayInit, SimplePool } from 'nostr-tools'
 import { BaseEvent } from 'src/core/event/Event'
 
 import { settings } from './settings'
@@ -17,6 +17,19 @@ export async function pushEvent(event: BaseEvent) {
     await relay.connect()
     relay.publish(event)
     relay.close()
+}
+
+export async function pushEventByPool(event: BaseEvent) {
+    const pool = new SimplePool()
+    const relays = [settings.relays[0]]
+    const pub = pool.publish(relays, event)
+    pub.on('ok', () => {
+        console.log('succeed')
+    })
+    pub.on('failed', () => {
+        console.log('failed')
+    })
+    pool.close(relays)
 }
 
 export async function sleep(ms: number) {
