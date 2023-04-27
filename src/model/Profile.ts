@@ -1,7 +1,8 @@
 import { nip19 } from 'nostr-tools'
-import { EventFinalized, KnownEventKind, parseEvent } from 'src/core/event/Event'
-import { MetaOpts } from 'src/core/event/EventBuilder'
-import Nip05 from 'src/core/utils/Nip05'
+
+import { EventFinalized, KnownEventKind, parseEvent } from '../core/event/Event'
+import { MetaOpts } from '../core/event/EventBuilder'
+import Nip05 from '../core/utils/Nip05'
 
 export default class Profile {
     pubkey: string
