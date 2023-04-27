@@ -16,7 +16,8 @@ const meta: MetaOpts = {
 test('Test send profile', async () => {
     const keys = new Keys(settings.privkeyEncoded)
     const event = new BaseEvent({})
-    event.modify(toMetadata, meta).signByKey(keys)
+    await event.modify(toMetadata, meta)
+    event.signByKey(keys)
     console.log(event)
     await pushEvent(event)
 })

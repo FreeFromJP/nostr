@@ -29,13 +29,14 @@ const relayInfo = {
 const contacts = [
     ['p', '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245'],
     ['p', '69dfcf1cf5be81090d9d95314ffb81e0230b9f569d350cb2babe608d4faaf3b0'],
-    ['p', '498e954bcd0c26e46fc3bcc79ec422df277b6db728d6a3439fe7fcc0a4b97c4e', 'wss://relay.damus.io', 'wall'],
+    ['p', '498e954bcd0c26e46fc3bcc79ec422df277b6db728d6a3439fe7fcc0a4b97c4e', 'wss://relay.damus.io', 'wall2'],
 ]
 
 test('Test contact', async () => {
     const keys = new Keys(settings.privkeyEncoded)
     const event = new BaseEvent({})
-    event.modify(toContact, relayInfo, contacts).signByKey(keys)
+    await event.modify(toContact, relayInfo, contacts)
+    event.signByKey(keys)
     console.log(event)
     await pushEvent(event)
 })
