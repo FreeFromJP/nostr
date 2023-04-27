@@ -78,7 +78,7 @@ export default class ReplayPool extends Observable {
     subs: {
         [subId: string]: {
             sub: MultiSubscription
-            filters: Filter
+            filters: Filter[]
             closeAfter: CloseAfter
             pending: boolean
         }
@@ -121,7 +121,7 @@ export default class ReplayPool extends Observable {
             })
     }
 
-    subscribe(filters: Filter, subId: string | null = null, closeAfter = CloseAfter.NEVER) {
+    subscribe(filters: Filter[], subId: string | null = null, closeAfter = CloseAfter.NEVER) {
         if (!subId) subId = `sub${this.nextSubId++}`
 
         const sub = new MultiSubscription(subId, [])

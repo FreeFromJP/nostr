@@ -83,7 +83,7 @@ export class Relay extends Observable {
         return this.socket.isConnected()
     }
 
-    publish(event: Event) {
+    publish(event: Event): Promise<boolean> {
         return new Promise((resolve) => {
             if (!this.socket.send(['EVENT', event])) {
                 return resolve(false)
@@ -106,12 +106,12 @@ export class Relay extends Observable {
         })
     }
 
-    subscribe(filters: Filter, subId: string, closeAfter = CloseAfter.NEVER) {
+    subscribe(filters: Filter[], subId?: string, closeAfter = CloseAfter.NEVER) {
         console.log('Relay.js------------subscribe----------')
         if (!subId) subId = `sub${this.nextSubId++}`
         const sub = new Subscription(this, subId, closeAfter)
         this.subs[subId] = sub
-        this.socket.send(['REQ', subId, filters])
+        this.socket.send(['REQ', subId, ...filters])
         console.log('REQ------------REQ----------', sub)
         return sub
     }
@@ -282,7 +282,7 @@ class ReconnectingWebSocket extends Observable {
         this.socket = null
     }
 
-    send(message: any) {
+    send(message: [string, ...any]) {
         // TODO Wait for connected?
         if (!this.isConnected() || this.socket === null) {
             console.warn(`Not connected to ${this.url} (currently ${this.socket?.readyState})`)
