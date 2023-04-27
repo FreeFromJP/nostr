@@ -8,6 +8,6 @@ export const settings = {
         'wss://relay.damus.io',
         'wss://nostr-pub.wellorder.net',
         'wss://nos.lol',
-        'wss://relay.nostr.info',
+        // 'wss://relay.nostr.info', 这个节点有问题
     ],
 }
