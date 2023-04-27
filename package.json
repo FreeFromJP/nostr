@@ -5,6 +5,7 @@
     "types": "dist/index.d.ts",
     "license": "Apache-2.0",
     "type": "module",
+    "private": false,
     "scripts": {
         "build": "rollup -c rollup.config.js",
         "dev": "nodemon -I --exec node --experimental-specifier-resolution=node  --loader ts-node/esm src/index.ts",
