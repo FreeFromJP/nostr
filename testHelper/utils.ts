@@ -23,13 +23,19 @@ export async function pushEventByPool(event: BaseEvent) {
     const pool = new SimplePool()
     const relays = [settings.relays[0]]
     const pub = pool.publish(relays, event)
-    pub.on('ok', () => {
-        console.log('succeed')
+    const p = new Promise((resolve) => {
+        pub.on('ok', () => {
+            console.log('succeed')
+            resolve(true)
+        })
+        pub.on('failed', () => {
+            console.log('failed')
+            resolve(false)
+        })
     })
-    pub.on('failed', () => {
-        console.log('failed')
-    })
+    const r = await p
     pool.close(relays)
+    return r
 }
 
 export async function sleep(ms: number) {
