@@ -1,8 +1,9 @@
-import 'websocket-polyfill'
-
 import NostrClient from 'src/NostrClient'
+import WebSocket from 'ws'
 
 import { settings } from '../testHelper/settings'
+
+global.WebSocket = WebSocket as any
 
 jest.useRealTimers()
 describe('NostrClient', () => {

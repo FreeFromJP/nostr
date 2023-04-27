@@ -1,9 +1,10 @@
-import 'websocket-polyfill'
-
 import { relayInit, SimplePool } from 'nostr-tools'
 import { BaseEvent } from 'src/core/event/Event'
+import WebSocket from 'ws'
 
 import { settings } from './settings'
+
+global.WebSocket = WebSocket as any
 
 export async function pushEvent(event: BaseEvent) {
     //this is a simple push
