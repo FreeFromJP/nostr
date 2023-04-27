@@ -41,7 +41,7 @@ export type EventFinalized = {
 }
 
 export interface mod {
-    (event: BaseEvent, ...opts: any): void
+    (event: BaseEvent, ...opts: any): Promise<void>
 }
 
 //this can be used to build new event or receive incoming event
@@ -78,11 +78,10 @@ export class BaseEvent {
 
     hash() {
         if (this.id == '') this.id = getEventHash(this)
-        return this.id
     }
 
-    modify(modFn: mod, ...opts: any) {
-        modFn(this, ...opts)
+    async modify(modFn: mod, ...opts: any) {
+        await modFn(this, ...opts)
         return this
     }
 
@@ -100,7 +99,6 @@ export class BaseEvent {
 export function parseEvent(event: EventFinalized): BaseEvent {
     if (event.createdAt == null && event.created_at == null) throw new Error('parse failed: no timestamp')
     const eventObj = new BaseEvent(event)
-    console.log(eventObj)
     if (eventObj.validate()) {
         return eventObj
     } else {

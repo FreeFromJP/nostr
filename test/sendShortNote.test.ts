@@ -8,7 +8,8 @@ import { pushEvent } from '../testHelper/utils'
 test('Test send note', async () => {
     const keys = new Keys(settings.privkeyEncoded)
     const event = new BaseEvent({})
-    event.modify(toNote, 'I am counting: 1').signByKey(keys)
+    await event.modify(toNote, 'I am counting: 1')
+    event.signByKey(keys)
     console.log(event)
     await pushEvent(event)
 })
