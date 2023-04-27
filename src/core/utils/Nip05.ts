@@ -1,4 +1,12 @@
-import fetch from 'cross-fetch'
+let _fetch: any
+
+try {
+    _fetch = fetch
+} catch (e: any) {}
+
+export function useFetchImplementation(fetchImplementation: any) {
+    _fetch = fetchImplementation
+}
 
 export default class Nip05 {
     static async fetchPubkey(nip05Id: string) {
@@ -7,7 +15,7 @@ export default class Nip05 {
 
         const url = `https://${host}/.well-known/nostr.json?name=${user}`
         try {
-            const res = await fetch(url)
+            const res = await _fetch(url)
             const json = await res.json()
             if (!json || !json.names) return
             return json.names[user]
@@ -19,7 +27,7 @@ export default class Nip05 {
     static async fetchNames(domain: string) {
         const url = `https://${domain}/.well-known/nostr.json`
         try {
-            const res = await fetch(url)
+            const res = await _fetch(url)
             const json = await res.json()
             return json?.names
         } catch (e) {
