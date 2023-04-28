@@ -1,4 +1,4 @@
-import type { Event, Filter, Pub, Sub, SubscriptionOptions } from 'nostr-tools'
+import type { Event, Filter, Sub, SubscriptionOptions } from 'nostr-tools'
 import { SimplePool } from 'nostr-tools'
 
 export default class NostrClient {
@@ -22,8 +22,26 @@ export default class NostrClient {
         return this.pool.sub(this.relays, filters, opts)
     }
 
-    publish(event: Event): Pub {
-        return this.pool.publish(this.relays, event)
+    publish(event: Event): Promise<void> {
+        const relaysLength = this.relays.length
+        const pub = this.pool.publish(this.relays, event)
+
+        const p = new Promise<void>((r, j) => {
+            let failedTimes = 0
+
+            pub.on('ok', () => {
+                r()
+            })
+
+            pub.on('failed', (reason: string) => {
+                failedTimes++
+                if (relaysLength === failedTimes) {
+                    j(reason)
+                }
+            })
+        })
+
+        return p
     }
 
     fetch(filters: Filter[], opts?: SubscriptionOptions): Promise<Event[]> {
