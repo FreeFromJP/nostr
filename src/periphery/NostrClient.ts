@@ -26,17 +26,17 @@ export default class NostrClient {
         const relaysLength = this.relays.length
         const pub = this.pool.publish(this.relays, event)
 
-        const p = new Promise<void>((r, j) => {
+        const p = new Promise<void>((resolve, reject) => {
             let failedTimes = 0
 
             pub.on('ok', () => {
-                r()
+                resolve()
             })
 
             pub.on('failed', (reason: string) => {
                 failedTimes++
                 if (relaysLength === failedTimes) {
-                    j(reason)
+                    reject(reason)
                 }
             })
         })

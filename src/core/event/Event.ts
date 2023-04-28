@@ -1,6 +1,7 @@
 import { getEventHash, signEvent, validateEvent, verifySignature } from 'nostr-tools'
 
 import { Keys } from '../account/Keys'
+import { now } from '../utils/Misc'
 
 //for reference
 export const KnownEventKind = {
@@ -25,10 +26,10 @@ export type Event = {
     id?: string
     tags?: string[][]
     created_at?: number
-    createdAt?: number
     sig?: string
 }
 
+//for existing events
 export type EventFinalized = {
     kind: number
     content: string
@@ -36,7 +37,7 @@ export type EventFinalized = {
     id: string
     tags: string[][]
     created_at?: number
-    createdAt?: number
+    createdAt?: number //other clients happened to use this
     sig: string
 }
 
@@ -57,7 +58,7 @@ export class BaseEvent {
     constructor(opts: Event) {
         this.id = opts.id || ''
         this.pubkey = opts.pubkey || ''
-        this.created_at = opts.createdAt || opts.created_at || Math.floor(Date.now() / 1000)
+        this.created_at = opts.created_at || now()
         this.kind = opts.kind || 0
         this.tags = opts.tags || []
         this.content = opts.content || ''
@@ -66,10 +67,6 @@ export class BaseEvent {
 
     get author() {
         return this.pubkey
-    }
-
-    get createdAt() {
-        return this.created_at
     }
 
     validate() {

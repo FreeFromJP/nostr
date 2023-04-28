@@ -16,7 +16,7 @@ const keys = new Keys(settings.privkeyEncoded)
 
 test('Test send note', async () => {
     const event = new BaseEvent({})
-    await event.modify(toDM, keys, otherPubkeyRaw, 'hello: 4')
+    await event.modify(toDM, keys, otherPubkeyRaw, 'hello: 8')
     event.signByKey(keys)
     await pushEvent(event)
 })

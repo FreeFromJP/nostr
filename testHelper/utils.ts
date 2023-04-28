@@ -43,6 +43,7 @@ export async function pushEventByPool(event: BaseEvent) {
 export async function pushEventByClient(event: BaseEvent) {
     const client = new NostrClient(settings.relays)
     const r = await client.publish(event)
+    await sleep(1000) //wait for all publish finished
     client.close()
     return r
 }
