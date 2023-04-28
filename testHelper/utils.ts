@@ -1,5 +1,6 @@
 import { relayInit, SimplePool } from 'nostr-tools'
 import { BaseEvent } from 'src/core/event/Event'
+import { NostrClient } from 'src/index'
 import WebSocket from 'ws'
 
 import { settings } from './settings'
@@ -36,6 +37,13 @@ export async function pushEventByPool(event: BaseEvent) {
     })
     const r = await p
     pool.close(relays)
+    return r
+}
+
+export async function pushEventByClient(event: BaseEvent) {
+    const client = new NostrClient(settings.relays)
+    const r = await client.publish(event)
+    client.close()
     return r
 }
 
