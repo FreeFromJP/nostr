@@ -37,6 +37,5 @@ test('Test contact', async () => {
     const event = new BaseEvent({})
     await event.modify(toContact, relayInfo, contacts)
     event.signByKey(keys)
-    console.log(event)
     await pushEvent(event)
 })

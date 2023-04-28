@@ -19,13 +19,11 @@ const event = new BaseEvent(Opts1)
 test('Test event sig', () => {
     const keys = new Keys(settings.privkeyEncoded)
     event.signByKey(keys)
-    console.log(event)
     expect(event.validate()).toBe(true)
 })
 
 test('Test event publish', async () => {
     const keys = new Keys(settings.privkeyEncoded)
     event.signByKey(keys)
-    console.log(event)
     await pushEvent(event)
 })

@@ -18,6 +18,5 @@ test('Test send profile', async () => {
     const event = new BaseEvent({})
     await event.modify(toMetadata, meta)
     event.signByKey(keys)
-    console.log(event)
     await pushEvent(event)
 })

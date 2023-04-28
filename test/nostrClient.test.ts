@@ -23,8 +23,6 @@ describe('NostrClient', () => {
             },
         ])
 
-        console.log(events)
-
         // the actual received number will be greater than 2, but there will be no duplicates
         expect(events.length).toEqual(
             events.map((evt) => evt.id).reduce((acc, n) => (acc.indexOf(n) !== -1 ? acc : [...acc, n]), [] as string[])

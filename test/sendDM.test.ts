@@ -18,6 +18,5 @@ test('Test send note', async () => {
     const event = new BaseEvent({})
     await event.modify(toDM, keys, otherPubkeyRaw, 'hello: 3')
     event.signByKey(keys)
-    console.log(event)
     await pushEvent(event)
 })

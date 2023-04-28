@@ -10,6 +10,5 @@ test('Test send note', async () => {
     const event = new BaseEvent({})
     await event.modify(toNote, 'I am counting: 1')
     event.signByKey(keys)
-    console.log(event)
     await pushEvent(event)
 })

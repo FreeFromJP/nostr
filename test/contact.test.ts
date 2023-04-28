@@ -17,6 +17,5 @@ const someonesContact = {
 
 test('parse profile event', async () => {
     const contact = Contact.from(someonesContact)
-    console.log(contact)
     expect(contact.contacts.length).toBe(3)
 })
