@@ -1,4 +1,4 @@
-import NostrClient from 'src/NostrClient'
+import NostrClient from 'src/periphery/NostrClient'
 import WebSocket from 'ws'
 
 import { settings } from '../testHelper/settings'
