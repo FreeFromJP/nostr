@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fetch = require('node-fetch')
+global.fetch = fetch as any
 import Profile from 'src/model/Profile'
 
 const someonesProfile = {
@@ -13,6 +16,5 @@ const someonesProfile = {
 
 test('parse profile event', async () => {
     const profile = Profile.from(someonesProfile)
-    console.log(profile)
     expect(await profile.isNip05Verified()).toBe(true)
 })
