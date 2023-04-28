@@ -1,6 +1,6 @@
 import 'websocket-polyfill'
 
-import NostrClient from 'src/NostrClient'
+import NostrClient from 'src/periphery/NostrClient'
 
 import { settings } from '../testHelper/settings'
 
