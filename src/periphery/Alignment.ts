@@ -18,8 +18,14 @@ export class SortedSet<T> extends SortedArray<T> {
 
     remove(value: T): void {
         const id = this.hash(value)
-        super.remove(value)
-        this.hashSet.delete(id)
+        const indexes = this.findAllIndexes(value)
+        for (const index of indexes) {
+            if (this.hash(this.get(index) as T) == id) {
+                this.data.splice(index, 1)
+                this.hashSet.delete(id)
+                break
+            }
+        }
     }
 
     has(value: T): boolean {
@@ -34,10 +40,15 @@ export class SortedSet<T> extends SortedArray<T> {
         }
         return -1
     }
+
+    //dangerous, for filtered data
+    setInternalData(data: T[]) {
+        this.data = data
+    }
 }
 
 export class SortedArray<T> {
-    private data: T[]
+    protected data: T[]
     private compare: (a: T, b: T) => number
 
     constructor(compareFn: (a: T, b: T) => number) {
