@@ -1,52 +1,3 @@
-export class SortedSet<T> extends SortedArray<T> {
-    private hash: (a: T) => string
-    private hashSet: Set<string>
-
-    constructor(compareFn: (a: T, b: T) => number, hash: (a: T) => string) {
-        super(compareFn)
-        this.hash = hash
-        this.hashSet = new Set<string>()
-    }
-
-    insert(value: T): void {
-        const id = this.hash(value)
-        if (!this.hashSet.has(id)) {
-            super.insert(value)
-            this.hashSet.add(id)
-        }
-    }
-
-    remove(value: T): void {
-        const id = this.hash(value)
-        const indexes = this.findAllIndexes(value)
-        for (const index of indexes) {
-            if (this.hash(this.get(index) as T) == id) {
-                this.data.splice(index, 1)
-                this.hashSet.delete(id)
-                break
-            }
-        }
-    }
-
-    has(value: T): boolean {
-        return this.hashSet.has(this.hash(value))
-    }
-
-    getIndexOf(value: T): number {
-        const id = this.hash(value)
-        const indexes = this.findAllIndexes(value)
-        for (const index of indexes) {
-            if (this.hash(this.get(index) as T) == id) return index
-        }
-        return -1
-    }
-
-    //dangerous, for filtered data
-    setInternalData(data: T[]) {
-        this.data = data
-    }
-}
-
 export class SortedArray<T> {
     protected data: T[]
     private compare: (a: T, b: T) => number
@@ -126,5 +77,54 @@ export class SortedArray<T> {
         }
 
         return left
+    }
+}
+
+export class SortedSet<T> extends SortedArray<T> {
+    private hash: (a: T) => string
+    private hashSet: Set<string>
+
+    constructor(compareFn: (a: T, b: T) => number, hash: (a: T) => string) {
+        super(compareFn)
+        this.hash = hash
+        this.hashSet = new Set<string>()
+    }
+
+    insert(value: T): void {
+        const id = this.hash(value)
+        if (!this.hashSet.has(id)) {
+            super.insert(value)
+            this.hashSet.add(id)
+        }
+    }
+
+    remove(value: T): void {
+        const id = this.hash(value)
+        const indexes = this.findAllIndexes(value)
+        for (const index of indexes) {
+            if (this.hash(this.get(index) as T) == id) {
+                this.data.splice(index, 1)
+                this.hashSet.delete(id)
+                break
+            }
+        }
+    }
+
+    has(value: T): boolean {
+        return this.hashSet.has(this.hash(value))
+    }
+
+    getIndexOf(value: T): number {
+        const id = this.hash(value)
+        const indexes = this.findAllIndexes(value)
+        for (const index of indexes) {
+            if (this.hash(this.get(index) as T) == id) return index
+        }
+        return -1
+    }
+
+    //dangerous, for filtered data
+    setInternalData(data: T[]) {
+        this.data = data
     }
 }
