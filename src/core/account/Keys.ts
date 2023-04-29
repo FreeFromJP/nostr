@@ -11,10 +11,10 @@ export class Keys {
         if (keyString != null) {
             if (keyString.length != 63) throw 'key length invalid'
             if (keyString.startsWith(PUBKEY_PREFIX)) {
-                this.pubkeyRaw = nip19.decode(keyString).data as string
+                this.pubkeyRaw = decodeKey(keyString)
                 this.privkeyRaw = ''
             } else if (keyString.startsWith(PRIKEY_PREFIX)) {
-                this.privkeyRaw = nip19.decode(keyString).data as string
+                this.privkeyRaw = decodeKey(keyString)
                 this.pubkeyRaw = getPublicKey(this.privkeyRaw)
             } else {
                 throw 'undefine key format'
@@ -48,4 +48,8 @@ export class Keys {
         if (this.privkeyRaw == '') throw new Error('can not decrypt')
         return nip04.decrypt(this.privkeyRaw, otherPubkeyRaw, content)
     }
+}
+
+export function decodeKey(keyRaw: string): string {
+    return nip19.decode(keyRaw).data as string
 }

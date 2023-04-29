@@ -1,12 +1,13 @@
 import { Filter } from 'nostr-tools'
 
+import { decodeKey } from '../core/account/Keys'
 import Profile from '../model/Profile'
 import NostrClient from './NostrClient'
 
 export async function fetchProfiles(client: NostrClient, pubkeys: string[]) {
     const filter: Filter = {
         kinds: [0],
-        authors: pubkeys,
+        authors: pubkeys.map((k) => decodeKey(k)),
     }
 
     const results = await client.fetch([filter])
