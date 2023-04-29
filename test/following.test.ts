@@ -28,10 +28,19 @@ test('Test digging the incoming messages', async () => {
     const client = new NostrClient(settings.relays)
     const follow = new Following(keysToFollow)
     follow.sub4Incoming(client, console.log)
-    const event = new BaseEvent({})
-    await event.modify(toNote, 'test for subscription: 3')
-    event.signByKey(keys)
-    await client.publish(event)
+    {
+        const event = new BaseEvent({})
+        await event.modify(toNote, 'test for subscription: 7')
+        event.signByKey(keys)
+        await client.publish(event)
+    }
+    await sleep(20)
+    {
+        const event = new BaseEvent({})
+        await event.modify(toNote, 'test for subscription: 8')
+        event.signByKey(keys)
+        await client.publish(event)
+    }
     await sleep(2000)
 
     client.close()

@@ -13,7 +13,7 @@ function sortDesc(events: EventFinalized[]) {
 
 export default class Following {
     messages: Message[] = []
-    followingPubkeysRaw: string[] = []
+    followingPubkeysRaw: string[] = [] //if following changed, make a new one
     sub?: Sub
 
     //accept encoded keys
@@ -47,7 +47,7 @@ export default class Following {
     }
 
     /**
-     * deal with incoming messages
+     * deal with incoming messages. can also used for device wake-up/network recovery after a while
      * @param client subscribe incoming message, can't ensure the order though (won't mess up display order)
      * @param cb: callback function when new message arrived
      * @param since: created_at exclusive
@@ -79,13 +79,14 @@ export default class Following {
     }
 
     /**
-     * for init, wake up device, network recover, etc...
+     * for init only
      * @param client
      * @param limit
      * @param cb1: callback function for digging
      * @param cb2: callback function for sub
      */
-    async refresh(client: NostrClient, limit = 100, cb1: (ms: Message[]) => void, cb2: (m: Message) => void) {
+    async quickStart(client: NostrClient, limit = 100, cb1: (ms: Message[]) => void, cb2: (m: Message) => void) {
+        this.messages = []
         const current = now()
         await this.digging(client, limit, cb1, current)
         this.sub4Incoming(client, cb2, current - 1)
