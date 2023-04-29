@@ -5,7 +5,6 @@ import { settings } from '../testHelper/settings'
 
 global.WebSocket = WebSocket as any
 
-// jest.useRealTimers()
 describe('NostrClient', () => {
     const pool = new NostrClient(settings.relays)
 
@@ -22,6 +21,8 @@ describe('NostrClient', () => {
         //         limit: 2,
         //     },
         // ])
+
+        console.log(pool)
 
         const events = await pool.fetch([
             {
@@ -45,4 +46,18 @@ describe('NostrClient', () => {
         const relaysForAllEvents = events.map((event) => pool.seenOn(event.id)).reduce((acc, n) => acc.concat(n), [])
         expect(relaysForAllEvents.length).toBeGreaterThanOrEqual(events.length)
     })
+})
+
+test('Test another fetch', async () => {
+    const client = new NostrClient(settings.relays)
+    const result = await client.fetch([
+        {
+            kinds: [0],
+            authors: [
+                '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+                '69dfcf1cf5be81090d9d95314ffb81e0230b9f569d350cb2babe608d4faaf3b0',
+            ],
+        },
+    ])
+    console.log(result)
 })

@@ -1,7 +1,9 @@
 import { Filter, Sub } from 'nostr-tools'
 import { now } from 'src/core/utils/Misc'
 
+import { decodeKey } from '../core/account/Keys'
 import { BaseEvent as Message, EventFinalized, parseEvent } from '../core/event/Event'
+import { KnownEventKind } from '../core/event/Event'
 import NostrClient from './NostrClient'
 
 //align in decreasing (created_at) order
@@ -14,8 +16,9 @@ export default class Following {
     followingPubkeysRaw: string[] = []
     sub?: Sub
 
+    //accept encoded keys
     constructor(followings: string[]) {
-        this.followingPubkeysRaw = followings
+        this.followingPubkeysRaw = followings.map((k) => decodeKey(k))
     }
 
     /**
@@ -27,7 +30,7 @@ export default class Following {
      */
     async digging(client: NostrClient, limit = 100, cb: (ms: Message[]) => void, until?: number) {
         const filter_fetch_history: Filter = {
-            kinds: [1],
+            kinds: [KnownEventKind.NOTE],
             authors: this.followingPubkeysRaw,
             limit: limit,
         }
@@ -54,7 +57,7 @@ export default class Following {
             this.sub.unsub()
         }
         const filter_sub: Filter = {
-            kinds: [1],
+            kinds: [KnownEventKind.NOTE],
             authors: this.followingPubkeysRaw,
             limit: 0,
         }
@@ -62,7 +65,10 @@ export default class Following {
             filter_sub.since = since
         } else if (this.messages.length > 0) {
             filter_sub.since = this.messages[0].created_at
+        } else {
+            filter_sub.since = now()
         }
+
         const sub = client.subscribe([filter_sub])
         sub.on('event', (event) => {
             const message = parseEvent(event)
