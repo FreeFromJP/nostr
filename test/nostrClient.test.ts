@@ -5,7 +5,7 @@ import { settings } from '../testHelper/settings'
 
 global.WebSocket = WebSocket as any
 
-jest.useRealTimers()
+// jest.useRealTimers()
 describe('NostrClient', () => {
     const pool = new NostrClient(settings.relays)
 

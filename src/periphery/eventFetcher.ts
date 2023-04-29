@@ -11,6 +11,7 @@ export async function fetchProfiles(client: NostrClient, pubkeys: string[]) {
     }
 
     const results = await client.fetch([filter])
+
     const profileUnchecked = results.map((x) => Profile.from(x) as Profile)
     const collections: { [pubkey: string]: Profile } = {}
     profileUnchecked.forEach((p) => {

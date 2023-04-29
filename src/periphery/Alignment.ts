@@ -80,6 +80,7 @@ export class SortedArray<T> {
     }
 }
 
+//for more complex scenarioes, don't use for now
 export class SortedSet<T> extends SortedArray<T> {
     private hash: (a: T) => string
     private hashSet: Set<string>
@@ -121,10 +122,5 @@ export class SortedSet<T> extends SortedArray<T> {
             if (this.hash(this.get(index) as T) == id) return index
         }
         return -1
-    }
-
-    //dangerous, for filtered data
-    setInternalData(data: T[]) {
-        this.data = data
     }
 }
