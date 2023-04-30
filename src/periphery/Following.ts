@@ -2,8 +2,7 @@ import { Filter, Sub } from 'nostr-tools'
 import { now } from 'src/core/utils/Misc'
 
 import { decodeKey } from '../core/account/Keys'
-import { BaseEvent as Message, EventFinalized, parseEvent } from '../core/event/Event'
-import { KnownEventKind } from '../core/event/Event'
+import { BaseEvent as Message, EventFinalized, KnownEventKind, parseEvent } from '../core/event/Event'
 import NostrClient from './NostrClient'
 
 //align in decreasing (created_at) order

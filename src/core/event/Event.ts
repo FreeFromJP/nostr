@@ -19,12 +19,15 @@ export const KnownEventKind = {
     BADGE_DEFINATION: 30009,
 }
 
+export type Tag = string[]
+export type Tags = Tag[]
+
 export type Event = {
     kind?: number
     content?: string
     pubkey?: string
     id?: string
-    tags?: string[][]
+    tags?: Tags
     created_at?: number
     sig?: string
 }
@@ -35,7 +38,7 @@ export type EventFinalized = {
     content: string
     pubkey: string
     id: string
-    tags: string[][]
+    tags: Tags
     created_at?: number
     createdAt?: number //other clients happened to use this
     sig: string
@@ -51,7 +54,7 @@ export class BaseEvent {
     pubkey: string
     created_at: number
     kind: number
-    tags: string[][]
+    tags: Tags
     content: string
     sig: string
 

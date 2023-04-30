@@ -25,6 +25,8 @@ export async function toNote(event: BaseEvent, content: string) {
     event.content = content
 }
 
+//kind-1 reply
+
 //kind-2 todo: recommend relay
 
 //kind-3 contact, using nip-02 and conventional relays recording in content
