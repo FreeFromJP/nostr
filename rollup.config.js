@@ -7,13 +7,17 @@ export default {
   output: {
       file: 'dist/index.js',
       format: 'es'
-  },
+    },
+    external: ['nostr-tools'],
   plugins: [typescript({
     module: 'esnext',
     exclude: ['node_modules/**', 'test/*', 'testHelper/*']
    }), uglify({
-    compress: {
-      drop_console: true
+     compress: {
+       drop_console: true
+      },
+    output: {
+      beautify: true,
     }
    })]
 };
