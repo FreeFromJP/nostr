@@ -6,60 +6,68 @@ import { Tags } from '../event/Event'
  * PREFERRED: ["e", <event-id>, <relay-url>, <marker>]
  */
 //todo support relay-url?
-export type NIP10 = {
+export default class NIP10 {
     root?: string
-    memtions?: string[]
-    reference?: string
-    p_tags?: string[]
-}
+    memtions: string[] = []
+    refer?: string
+    p_tags: string[] = []
 
-export function tagsToNip10(tags: Tags): NIP10 {
-    const nip10: NIP10 = {}
-    if (tags.length == 0) return nip10
-    const p_tags = tags.filter((t) => t[0] == 'p')
-    if (p_tags.length > 0) nip10.p_tags = p_tags.map((x) => x[1])
-    const e_tags = tags.filter((t) => t[0] == 'e')
-
-    //todo detect which version old or new?
-    if (e_tags[0].length < 4) {
-        nip10.root = e_tags[0][1]
-        switch (e_tags.length) {
-            case 1:
-                break
-            default: //2 or 3 or more
-                nip10.memtions = e_tags.slice(1, e_tags.length - 1).map((x) => x[1])
-                nip10.reference = e_tags[e_tags.length - 1][1]
-        }
-    } else if (e_tags[0].length == 4) {
-        e_tags.forEach((t) => {
-            const [, k, , m] = t
-            switch (m) {
-                case 'root':
-                    nip10.root = k
-                    break
-                case 'mention':
-                    nip10.memtions?.push(k)
-                    break
-                case 'reply':
-                    nip10.reference = k
-                    break
+    constructor(tags?: Tags) {
+        if (tags && tags.length > 0) {
+            const p_tags = tags.filter((t) => t[0] == 'p')
+            if (p_tags.length > 0) this.p_tags = p_tags.map((x) => x[1])
+            const e_tags = tags.filter((t) => t[0] == 'e')
+            //todo detect which version old or new?
+            if (e_tags[0].length < 4) {
+                this.root = e_tags[0][1]
+                switch (e_tags.length) {
+                    case 1:
+                        break
+                    default: //2 or 3 or more
+                        this.memtions = e_tags.slice(1, e_tags.length - 1).map((x) => x[1])
+                        this.refer = e_tags[e_tags.length - 1][1]
+                }
+            } else if (e_tags[0].length == 4) {
+                e_tags.forEach((t) => {
+                    const [, k, , m] = t
+                    switch (m) {
+                        case 'root':
+                            this.root = k
+                            break
+                        case 'mention':
+                            this.memtions?.push(k)
+                            break
+                        case 'reply':
+                            this.refer = k
+                            break
+                    }
+                })
             }
-        })
+        }
     }
-    return nip10
-}
 
-export function nip10ToTags(nip10: NIP10): Tags {
-    const tags: Tags = []
-    if (nip10.root != null) {
-        tags.push(['e', nip10.root, '', 'root'])
-        nip10.memtions?.forEach((m) => {
+    setRefer(refer: string) {
+        this.refer = refer
+    }
+
+    addMentions(newMentions: string[]) {
+        this.memtions = this.memtions.concat(newMentions)
+    }
+
+    addPubkeys(pks: string[]) {
+        this.p_tags = this.p_tags.concat(pks)
+    }
+
+    toTags(): Tags {
+        const tags: Tags = []
+        if (this.root != null) tags.push(['e', this.root, '', 'root'])
+        this.memtions.forEach((m) => {
             tags.push(['e', m, '', 'mention'])
         })
-        if (nip10.reference != null) tags.push(['e', nip10.reference, '', 'reply'])
+        if (this.refer != null) tags.push(['e', this.refer, '', 'reply'])
+        this.p_tags.forEach((p) => {
+            tags.push(['p', p])
+        })
+        return tags
     }
-    nip10.p_tags?.forEach((p) => {
-        tags.push(['p', p])
-    })
-    return tags
 }

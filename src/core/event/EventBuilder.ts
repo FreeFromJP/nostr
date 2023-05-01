@@ -1,4 +1,5 @@
 import { Keys } from '../account/Keys'
+import NIP10 from '../utils/Nip10'
 import { BaseEvent, KnownEventKind } from './Event'
 
 //kind-0 metadata
@@ -26,6 +27,18 @@ export async function toNote(event: BaseEvent, content: string) {
 }
 
 //kind-1 reply
+export async function toReply(event: BaseEvent, referEvent: BaseEvent, content: string) {
+    event.kind = KnownEventKind.NOTE
+    event.content = content
+    const nip10 = new NIP10(referEvent.tags)
+    nip10.addPubkeys([referEvent.author])
+    if (nip10.refer != null) {
+        nip10.addMentions([nip10.refer])
+    }
+    nip10.setRefer(referEvent.id)
+    const tags = nip10.toTags()
+    event.tags = tags
+}
 
 //kind-2 todo: recommend relay
 
