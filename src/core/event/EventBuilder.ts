@@ -31,10 +31,18 @@ export async function toReply(event: BaseEvent, referEvent: BaseEvent, content: 
     event.kind = KnownEventKind.NOTE
     event.content = content
     const nip10 = new NIP10(referEvent.tags)
-    nip10.addPubkeys([referEvent.author])
-    if (nip10.refer != null) {
+    //reply to root
+    if (nip10.root == null && nip10.refer == null) {
+        //do nothing
+    } else if (nip10.root == null && nip10.refer != null) {
+        //reply to level 1 child
+        nip10.root = nip10.refer
+    } else if (nip10.root != null && nip10.refer != null) {
         nip10.addMentions([nip10.refer])
+    } else {
+        throw new Error('Relpy to invaild content')
     }
+    nip10.addPubkeys([referEvent.author])
     nip10.setRefer(referEvent.id)
     const tags = nip10.toTags()
     event.tags = tags
