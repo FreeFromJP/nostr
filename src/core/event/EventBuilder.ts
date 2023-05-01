@@ -75,3 +75,5 @@ export async function toDM(event: BaseEvent, keys: Keys, otherPubkeyRaw: string,
     event.content = await keys.encrypt(otherPubkeyRaw, plainText)
     event.tags = [['p', otherPubkeyRaw]]
 }
+
+//kind-6 repost

@@ -2,16 +2,16 @@ import { Filter, Sub } from 'nostr-tools'
 import { now } from 'src/core/utils/Misc'
 
 import { decodeKey } from '../core/account/Keys'
-import { BaseEvent as Message, EventFinalized, KnownEventKind, parseEvent } from '../core/event/Event'
+import { BaseEvent as note, EventFinalized, KnownEventKind, parseEvent } from '../core/event/Event'
 import NostrClient from './NostrClient'
 
 //align in decreasing (created_at) order
 function sortDesc(events: EventFinalized[]) {
-    return events.map((x) => parseEvent(x) as Message).sort((a, b) => b.created_at - a.created_at)
+    return events.map((x) => parseEvent(x) as note).sort((a, b) => b.created_at - a.created_at)
 }
 
 export default class Following {
-    messages: Message[] = []
+    notes: note[] = []
     followingPubkeysRaw: string[] = [] //if following changed, make a new one
     sub?: Sub
 
@@ -27,7 +27,7 @@ export default class Following {
      * @param cb: callback function when data fetched
      * @param until: created_at exclusive
      */
-    async digging(client: NostrClient, limit = 100, cb: (ms: Message[]) => void, until?: number) {
+    async digging(client: NostrClient, limit = 100, cb: (ms: note[]) => void, until?: number) {
         const filter_fetch_history: Filter = {
             kinds: [KnownEventKind.NOTE],
             authors: this.followingPubkeysRaw,
@@ -35,13 +35,13 @@ export default class Following {
         }
         if (until != null) {
             filter_fetch_history.until = until
-        } else if (this.messages.length > 0) {
-            filter_fetch_history.until = this.messages[this.messages.length - 1].created_at
+        } else if (this.notes.length > 0) {
+            filter_fetch_history.until = this.notes[this.notes.length - 1].created_at
         }
 
         const results = await client.fetch([filter_fetch_history])
         const newMessages = sortDesc(results)
-        this.messages = this.messages.concat(newMessages)
+        this.notes = this.notes.concat(newMessages)
         cb(newMessages)
     }
 
@@ -51,7 +51,7 @@ export default class Following {
      * @param cb: callback function when new message arrived
      * @param since: created_at exclusive
      */
-    sub4Incoming(client: NostrClient, cb: (m: Message) => void, since?: number) {
+    sub4Incoming(client: NostrClient, cb: (m: note) => void, since?: number) {
         if (this.sub != null) {
             this.sub.unsub()
         }
@@ -62,8 +62,8 @@ export default class Following {
         }
         if (since != null) {
             filter_sub.since = since
-        } else if (this.messages.length > 0) {
-            filter_sub.since = this.messages[0].created_at
+        } else if (this.notes.length > 0) {
+            filter_sub.since = this.notes[0].created_at
         } else {
             filter_sub.since = now()
         }
@@ -71,7 +71,7 @@ export default class Following {
         const sub = client.subscribe([filter_sub])
         sub.on('event', (event) => {
             const message = parseEvent(event)
-            this.messages.unshift(message)
+            this.notes.unshift(message)
             cb(message)
         })
         this.sub = sub
@@ -84,8 +84,8 @@ export default class Following {
      * @param cb1: callback function for digging
      * @param cb2: callback function for sub
      */
-    async quickStart(client: NostrClient, limit = 100, cb1: (ms: Message[]) => void, cb2: (m: Message) => void) {
-        this.messages = []
+    async quickStart(client: NostrClient, limit = 100, cb1: (ms: note[]) => void, cb2: (m: note) => void) {
+        this.notes = []
         const current = now()
         await this.digging(client, limit, cb1, current)
         this.sub4Incoming(client, cb2, current - 1)

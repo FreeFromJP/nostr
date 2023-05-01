@@ -1,7 +1,7 @@
 import { Tags } from '../event/Event'
 
 /**
- * /NIP-10 tags for kind-1 message
+ * /NIP-10 tags for kind-1 note
  * DEPRECATED: ["e", <event-id>, <relay-url>]
  * PREFERRED: ["e", <event-id>, <relay-url>, <marker>]
  */
