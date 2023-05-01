@@ -40,15 +40,15 @@ export default class Following {
         }
 
         const results = await client.fetch([filter_fetch_history])
-        const newMessages = sortDesc(results)
-        this.notes = this.notes.concat(newMessages)
-        cb(newMessages)
+        const newNotes = sortDesc(results)
+        this.notes = this.notes.concat(newNotes)
+        cb(newNotes)
     }
 
     /**
-     * deal with incoming messages. can also used for device wake-up/network recovery after a while
-     * @param client subscribe incoming message, can't ensure the order though (won't mess up display order)
-     * @param cb: callback function when new message arrived
+     * deal with incoming notes. can also used for device wake-up/network recovery after a while
+     * @param client subscribe incoming note, can't ensure the order though (won't mess up display order)
+     * @param cb: callback function when new note arrived
      * @param since: created_at exclusive
      */
     sub4Incoming(client: NostrClient, cb: (m: note) => void, since?: number) {
@@ -70,9 +70,9 @@ export default class Following {
 
         const sub = client.subscribe([filter_sub])
         sub.on('event', (event) => {
-            const message = parseEvent(event)
-            this.notes.unshift(message)
-            cb(message)
+            const note = parseEvent(event)
+            this.notes.unshift(note)
+            cb(note)
         })
         this.sub = sub
     }

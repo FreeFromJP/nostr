@@ -17,14 +17,14 @@ const keysToFollow = [
 
 const keys = new Keys(settings.privkeyEncoded)
 
-// test('Test fetch messages', async () => {
+// test('Test fetch notes', async () => {
 //     const client = new NostrClient(settings.relays)
 //     const follow = new Following(keysToFollow)
 //     await follow.digging(client, 20, console.log)
 //     client.close()
 // })
 
-test('Test digging the incoming messages', async () => {
+test('Test digging the incoming notes', async () => {
     const client = new NostrClient(settings.relays)
     const follow = new Following(keysToFollow)
     follow.sub4Incoming(client, console.log)
