@@ -29,14 +29,14 @@ test('Test digging the incoming notes', async () => {
     const follow = new Following(keysToFollow)
     follow.sub4Incoming(client, console.log)
     {
-        const event = new BaseEvent({})
+        const event = new BaseEvent()
         await event.modify(toNote, 'test for subscription: 9')
         event.signByKey(keys)
         await client.publish(event)
     }
     await sleep(20)
     {
-        const event = new BaseEvent({})
+        const event = new BaseEvent()
         await event.modify(toNote, 'test for subscription: 10')
         event.signByKey(keys)
         await client.publish(event)

@@ -1,8 +1,9 @@
-import { getEventHash, signEvent, validateEvent, verifySignature } from 'nostr-tools'
+import { Event, getEventHash, signEvent, validateEvent, verifySignature } from 'nostr-tools'
 
 import { Keys } from '../account/Keys'
 import { now } from '../utils/Misc'
 
+export { Event as EventFinalized }
 //for reference
 export const KnownEventKind = {
     METADATA: 0,
@@ -22,28 +23,6 @@ export const KnownEventKind = {
 export type Tag = string[]
 export type Tags = Tag[]
 
-export type Event = {
-    kind?: number
-    content?: string
-    pubkey?: string
-    id?: string
-    tags?: Tags
-    created_at?: number
-    sig?: string
-}
-
-//for existing events
-export type EventFinalized = {
-    kind: number
-    content: string
-    pubkey: string
-    id: string
-    tags: Tags
-    created_at?: number
-    createdAt?: number //other clients happened to use this
-    sig: string
-}
-
 export interface mod {
     (event: BaseEvent, ...opts: any): Promise<void>
 }
@@ -58,14 +37,24 @@ export class BaseEvent {
     content: string
     sig: string
 
-    constructor(opts: Event) {
-        this.id = opts.id || ''
-        this.pubkey = opts.pubkey || ''
-        this.created_at = opts.created_at || now()
-        this.kind = opts.kind || 0
-        this.tags = opts.tags || []
-        this.content = opts.content || ''
-        this.sig = opts.sig || ''
+    constructor(opts?: Event) {
+        if (opts != null) {
+            this.id = opts.id
+            this.pubkey = opts.pubkey
+            this.created_at = opts.created_at
+            this.kind = opts.kind
+            this.tags = opts.tags
+            this.content = opts.content
+            this.sig = opts.sig
+        } else {
+            this.id = ''
+            this.pubkey = ''
+            this.created_at = now()
+            this.kind = -1
+            this.tags = []
+            this.content = ''
+            this.sig = ''
+        }
     }
 
     get author() {
@@ -96,8 +85,7 @@ export class BaseEvent {
     }
 }
 
-export function parseEvent(event: EventFinalized): BaseEvent {
-    if (event.createdAt == null && event.created_at == null) throw new Error('parse failed: no timestamp')
+export function parseEvent(event: Event): BaseEvent {
     const eventObj = new BaseEvent(event)
     if (eventObj.validate()) {
         return eventObj

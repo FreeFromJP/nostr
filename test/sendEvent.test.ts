@@ -13,7 +13,7 @@ const keys = new Keys(settings.privkeyEncoded)
 
 test('Test send note', async () => {
     const client = new NostrClient(settings.relays)
-    const event = new BaseEvent({})
+    const event = new BaseEvent()
     await event.modify(toDM, keys, otherPubkeyRaw, 'hello: 9')
     event.signByKey(keys)
     await client.publish(event)
@@ -32,7 +32,7 @@ const meta: MetaOpts = {
 test('Test send profile', async () => {
     const client = new NostrClient(settings.relays)
     const keys = new Keys(settings.privkeyEncoded)
-    const event = new BaseEvent({})
+    const event = new BaseEvent()
     await event.modify(toMetadata, meta)
     event.signByKey(keys)
     await client.publish(event)
@@ -43,7 +43,7 @@ test('Test send profile', async () => {
 test('Test send note', async () => {
     const client = new NostrClient(settings.relays)
     const keys = new Keys(settings.privkeyEncoded)
-    const event = new BaseEvent({})
+    const event = new BaseEvent()
     await event.modify(toNote, 'I am counting: 1')
     event.signByKey(keys)
     await client.publish(event)
@@ -81,7 +81,7 @@ const contacts = [
 test('Test contact', async () => {
     const client = new NostrClient(settings.relays)
     const keys = new Keys(settings.privkeyEncoded)
-    const event = new BaseEvent({})
+    const event = new BaseEvent()
     await event.modify(toContact, relayInfo, contacts)
     event.signByKey(keys)
     await client.publish(event)

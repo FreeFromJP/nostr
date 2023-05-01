@@ -53,7 +53,7 @@ const toEvent3 = {
 test('Rely to an event', async () => {
     const client = new NostrClient(settings.relays)
     const to_event = new BaseEvent(toEvent3)
-    const event = new BaseEvent({})
+    const event = new BaseEvent()
     await event.modify(toReply, to_event, 'test reply: to level 2 child 1')
     event.signByKey(keys)
     console.log(event)
