@@ -12,7 +12,7 @@ export const KnownEventKind = {
     CONTACT: 3,
     DM: 4,
     DELETE: 5,
-    SHARE: 6,
+    REPOST: 6,
     REACTION: 7,
     BADGE_PROFILE: 8,
     CHATROOM: 42,
@@ -39,6 +39,7 @@ export class BaseEvent {
 
     constructor(event?: Event) {
         if (event) {
+            if (!validate(event)) throw new Error('pares error!')
             this.id = event.id
             this.pubkey = event.pubkey
             this.created_at = event.created_at
@@ -61,10 +62,6 @@ export class BaseEvent {
         return this.pubkey
     }
 
-    validate() {
-        return validateEvent(this) && verifySignature(this)
-    }
-
     hash() {
         if (this.id == '') this.id = getEventHash(this)
     }
@@ -83,13 +80,22 @@ export class BaseEvent {
             throw new Error('cannot get signed')
         }
     }
+
+    finalized() {
+        const event: Event = {
+            id: this.id,
+            kind: this.kind,
+            pubkey: this.pubkey,
+            content: this.content,
+            tags: this.tags,
+            sig: this.sig,
+            created_at: this.created_at,
+        }
+        if (validate(event)) return event
+        throw new Error('not a finalized event')
+    }
 }
 
-export function parseEvent(event: Event): BaseEvent {
-    const eventObj = new BaseEvent(event)
-    if (eventObj.validate()) {
-        return eventObj
-    } else {
-        throw new Error('varification failed')
-    }
+function validate(event: Event) {
+    return validateEvent(event) && verifySignature(event)
 }

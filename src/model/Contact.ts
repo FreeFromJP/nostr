@@ -1,4 +1,4 @@
-import { EventFinalized, KnownEventKind, parseEvent } from 'src/core/event/Event'
+import { BaseEvent, EventFinalized, KnownEventKind } from 'src/core/event/Event'
 import { contacts, relayInfo } from 'src/core/event/EventBuilder'
 
 type relay = {
@@ -35,7 +35,7 @@ export default class Contact {
         if (event.kind != KnownEventKind.CONTACT) throw new Error('kind-3 event expected')
         let relays: relayInfo
         let contacts: contacts = []
-        const eventObj = parseEvent(event)
+        const eventObj = new BaseEvent(event)
         try {
             //todo add checks
             relays = JSON.parse(event.content) as relayInfo

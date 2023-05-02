@@ -1,4 +1,4 @@
-import { BaseEvent, parseEvent } from 'src/core/event/Event'
+import { BaseEvent } from 'src/core/event/Event'
 
 const eventForTest = {
     id: '748a41b264f4400acbb8f7190c0e367ad495796a108a6794ac65dd449a9bec6d',
@@ -11,6 +11,6 @@ const eventForTest = {
 }
 
 test('parse event', () => {
-    const eventObj = parseEvent(eventForTest)
+    const eventObj = new BaseEvent(eventForTest)
     expect(eventObj instanceof BaseEvent).toBe(true)
 })

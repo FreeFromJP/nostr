@@ -1,6 +1,6 @@
 import { Keys } from '../account/Keys'
 import NIP10 from '../utils/Nip10'
-import { BaseEvent, KnownEventKind } from './Event'
+import { BaseEvent, EventFinalized, KnownEventKind, Tags } from './Event'
 
 //kind-0 metadata
 export interface MetaOpts {
@@ -76,3 +76,22 @@ export async function toDM(event: BaseEvent, keys: Keys, otherPubkeyRaw: string,
 }
 
 //kind-6 repost
+export async function toRepost(event: BaseEvent, orgEvent: EventFinalized) {
+    event.kind = KnownEventKind.REPOST
+    event.content = JSON.stringify(orgEvent)
+    const tags: Tags = orgEvent.tags.filter((t) => t[0] == 'p')
+    tags.unshift(['e', orgEvent.id])
+    tags.push(['p', orgEvent.pubkey])
+}
+
+//kind-7 reaction, emojis are like: 🖤 🐶 🌧️ 😼 etc...
+export async function toReaction(event: BaseEvent, orgEvent: EventFinalized, emoji: string) {
+    event.kind = KnownEventKind.REACTION
+    event.content = emoji
+    const e_tags: Tags = orgEvent.tags.filter((t) => t[0] == 'e')
+    const p_tags: Tags = orgEvent.tags.filter((t) => t[0] == 'p')
+    event.tags = e_tags
+        .concat([['e', orgEvent.id]])
+        .concat(p_tags)
+        .concat([['p', orgEvent.pubkey]])
+}

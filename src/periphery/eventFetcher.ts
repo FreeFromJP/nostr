@@ -2,7 +2,7 @@ import { Filter } from 'nostr-tools'
 import Note from 'src/model/Note'
 
 import { decodeKey } from '../core/account/Keys'
-import { KnownEventKind } from '../core/event/Event'
+import { EventFinalized, KnownEventKind } from '../core/event/Event'
 import Contact from '../model/Contact'
 import Profile from '../model/Profile'
 import NostrClient from './NostrClient'
@@ -41,7 +41,7 @@ export async function fetchContact(client: NostrClient, pubkeyRaw: string): Prom
 
 export async function fetchNotes(client: NostrClient, ids: string[]): Promise<Note[]> {
     const filter = {
-        kinds: [1],
+        kinds: [KnownEventKind.NOTE],
         ids: ids,
     }
     const results = await client.fetch([filter])
@@ -55,7 +55,7 @@ export async function fetchRepliesOrdered(
     until?: number,
 ): Promise<Note[]> {
     const filter: Filter = {
-        kinds: [1],
+        kinds: [KnownEventKind.NOTE],
         '#e': [root_id],
         limit: limit,
     }
@@ -65,4 +65,22 @@ export async function fetchRepliesOrdered(
     const results = await client.fetch([filter])
     if (results.length == 0) return []
     return results.sort((a, b) => a.created_at - b.created_at).map((n) => new Note(n))
+}
+
+//there is no need to create a model for repost
+export async function fetchReposts(client: NostrClient, eventId: string): Promise<EventFinalized[]> {
+    const filter: Filter = {
+        kinds: [KnownEventKind.REPOST],
+        '#e': [eventId],
+    }
+    return await client.fetch([filter])
+}
+
+//there is no need to create a model for reaction
+export async function fetchReactions(client: NostrClient, eventId: string): Promise<EventFinalized[]> {
+    const filter: Filter = {
+        kinds: [KnownEventKind.REACTION],
+        '#e': [eventId],
+    }
+    return await client.fetch([filter])
 }

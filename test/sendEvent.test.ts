@@ -2,7 +2,9 @@ import { Keys } from 'src/core/account/Keys'
 import { BaseEvent } from 'src/core/event/Event'
 import { contacts, relayInfo, toContact, toDM, toMetadata, toNote } from 'src/core/event/EventBuilder'
 import { MetaOpts } from 'src/core/event/EventBuilder'
+import { toReaction, toRepost } from 'src/core/event/EventBuilder'
 import { NostrClient } from 'src/index'
+import Note from 'src/model/Note'
 
 import { settings } from '../testHelper/settings'
 import { sleep } from '../testHelper/utils'
@@ -83,6 +85,48 @@ test('Test contact', async () => {
     const keys = new Keys(settings.privkeyEncoded)
     const event = new BaseEvent()
     await event.modify(toContact, relayInfo, contacts)
+    event.signByKey(keys)
+    await client.publish(event)
+    await sleep(500)
+    client.close()
+})
+
+const rEvent = {
+    pubkey: '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
+    content:
+        'seems correct https://nostr.build/i/c8f7ed917b976101839ed349a5b078c91c3427dc1923416d7a048d81b4c6b74e.jpg ',
+    id: '7ce68f2dcaf4febd7bba3238d3acb4ad1d156e4083eb624a694c35ef887f8821',
+    created_at: 1682990572,
+    sig: '76723d7eee040674000ef02dc30a294aa816ee8d7d49d93b206328069b08d69fddecd94272234fe5d400dea575031275ae7267780366cbb6cb0f65074de002c7',
+    kind: 1,
+    tags: [
+        [
+            'imeta',
+            'url https://nostr.build/i/c8f7ed917b976101839ed349a5b078c91c3427dc1923416d7a048d81b4c6b74e.jpg',
+            'blurhash e46*aa?bE0oyD%-;s;Rja{Rj9FWBt7Rjof%MozWBafRj00RjtQRjt7',
+            'dim 1179x1473',
+        ],
+    ],
+}
+
+test('Test repost', async () => {
+    const client = new NostrClient(settings.relays)
+    const keys = new Keys(settings.privkeyEncoded)
+    const event = new BaseEvent()
+    const repostTo = new Note(rEvent) //mimic the note already load in frontend
+    await event.modify(toRepost, repostTo.finalized())
+    event.signByKey(keys)
+    await client.publish(event)
+    await sleep(500)
+    client.close()
+})
+
+test('Test reaction', async () => {
+    const client = new NostrClient(settings.relays)
+    const keys = new Keys(settings.privkeyEncoded)
+    const event = new BaseEvent()
+    const repostTo = new Note(rEvent)
+    await event.modify(toReaction, repostTo.finalized(), '🐱')
     event.signByKey(keys)
     await client.publish(event)
     await sleep(500)

@@ -1,6 +1,6 @@
 import { nip19 } from 'nostr-tools'
 
-import { EventFinalized, KnownEventKind, parseEvent } from '../core/event/Event'
+import { BaseEvent, EventFinalized, KnownEventKind } from '../core/event/Event'
 import { MetaOpts } from '../core/event/EventBuilder'
 import Nip05 from '../core/utils/Nip05'
 
@@ -36,7 +36,7 @@ export default class Profile {
 
     static from(event: EventFinalized) {
         if (event.kind != KnownEventKind.METADATA) throw new Error('kind-1 event expected')
-        const eventObj = parseEvent(event)
+        const eventObj = new BaseEvent(event)
         const metadata = JSON.parse(event.content) as MetaOpts
         return new Profile(nip19.npubEncode(eventObj.pubkey), metadata, eventObj.created_at)
     }
