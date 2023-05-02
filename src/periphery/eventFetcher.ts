@@ -3,6 +3,7 @@ import Note from 'src/model/Note'
 
 import { decodeKey } from '../core/account/Keys'
 import { KnownEventKind } from '../core/event/Event'
+import Contact from '../model/Contact'
 import Profile from '../model/Profile'
 import NostrClient from './NostrClient'
 
@@ -24,6 +25,18 @@ export async function fetchProfiles(client: NostrClient, pubkeys: string[]): Pro
         }
     })
     return collections
+}
+
+export async function fetchContact(client: NostrClient, pubkeyRaw: string): Promise<Contact | null> {
+    const filter: Filter = {
+        kinds: [KnownEventKind.CONTACT],
+        authors: [pubkeyRaw],
+    }
+    const results = await client.fetch([filter])
+    if (results.length == 0) return null
+    if (results.length == 1) return Contact.from(results[0])
+    const latest = results.reduce((a, b) => (a.created_at > b.created_at ? a : b))
+    return Contact.from(latest)
 }
 
 export async function fetchNotes(client: NostrClient, ids: string[]): Promise<Note[]> {
