@@ -24,7 +24,7 @@ export type Tag = string[]
 export type Tags = Tag[]
 
 export interface mod {
-    (event: BaseEvent, ...opts: any): Promise<void>
+    (eventObj: BaseEvent, ...opts: any): Promise<void>
 }
 
 //this can be used to build new event or receive incoming event
@@ -37,15 +37,15 @@ export class BaseEvent {
     content: string
     sig: string
 
-    constructor(opts?: Event) {
-        if (opts != null) {
-            this.id = opts.id
-            this.pubkey = opts.pubkey
-            this.created_at = opts.created_at
-            this.kind = opts.kind
-            this.tags = opts.tags
-            this.content = opts.content
-            this.sig = opts.sig
+    constructor(event?: Event) {
+        if (event) {
+            this.id = event.id
+            this.pubkey = event.pubkey
+            this.created_at = event.created_at
+            this.kind = event.kind
+            this.tags = event.tags
+            this.content = event.content
+            this.sig = event.sig
         } else {
             this.id = ''
             this.pubkey = ''

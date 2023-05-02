@@ -124,3 +124,15 @@ export class SortedSet<T> extends SortedArray<T> {
         return -1
     }
 }
+
+interface Timestamped {
+    created_at: number
+}
+
+export function sortDesc(events: Timestamped[]) {
+    return events.sort((a, b) => b.created_at - a.created_at)
+}
+
+export function sortAsc(events: Timestamped[]) {
+    return events.sort((a, b) => a.created_at - b.created_at)
+}

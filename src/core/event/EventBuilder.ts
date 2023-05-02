@@ -65,7 +65,6 @@ export async function toContact(event: BaseEvent, relays: relayInfo, contacts: c
         if (c[3]) arr.push(c[3]) //petname
         return arr
     })
-    console.log(event)
     event.tags = tags
 }
 

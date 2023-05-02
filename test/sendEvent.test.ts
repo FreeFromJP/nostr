@@ -22,7 +22,7 @@ test('Test send note', async () => {
 })
 
 const meta: MetaOpts = {
-    name: 'The God Emperor 3',
+    name: 'The God Emperor 4',
     display_name: 'The God Emperor',
     picture:
         'https://boredmummy.mypinata.cloud/ipfs/QmRiseEviB3gWSFC4cDbC2yp94UzvKKr24vNM3KzWFEHR9?_gl=1*zevgdj*_ga*NDY0ODUxNTQ3LjE2Njg5MTYzMzc.*_ga_5RMPXG14TE*MTY3Nzc0NTcxOC43LjEuMTY3Nzc0NTcyMi41Ni4wLjA.',

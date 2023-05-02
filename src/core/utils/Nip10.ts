@@ -18,33 +18,39 @@ export default class NIP10 {
             if (p_tags.length > 0) this.p_tags = p_tags.map((x) => x[1])
             const e_tags = tags.filter((t) => t[0] == 'e')
             //todo detect which version old or new?
-            if (e_tags[0].length < 4) {
-                switch (e_tags.length) {
-                    case 1:
-                        this.refer = e_tags[0][1]
-                        break
-                    default: //2 or 3 or more
-                        this.root = e_tags[0][1]
-                        this.memtions = e_tags.slice(1, e_tags.length - 1).map((x) => x[1])
-                        this.refer = e_tags[e_tags.length - 1][1]
-                }
-            } else if (e_tags[0].length == 4) {
-                e_tags.forEach((t) => {
-                    const [, k, , m] = t
-                    switch (m) {
-                        case 'root':
-                            this.root = k
+            if (e_tags.length > 0) {
+                if (e_tags[0].length < 4) {
+                    switch (e_tags.length) {
+                        case 1:
+                            this.refer = e_tags[0][1]
                             break
-                        case 'mention':
-                            this.memtions.push(k)
-                            break
-                        case 'reply':
-                            this.refer = k
-                            break
+                        default: //2 or 3 or more
+                            this.root = e_tags[0][1]
+                            this.memtions = e_tags.slice(1, e_tags.length - 1).map((x) => x[1])
+                            this.refer = e_tags[e_tags.length - 1][1]
                     }
-                })
+                } else if (e_tags[0].length == 4) {
+                    e_tags.forEach((t) => {
+                        const [, k, , m] = t
+                        switch (m) {
+                            case 'root':
+                                this.root = k
+                                break
+                            case 'mention':
+                                this.memtions.push(k)
+                                break
+                            case 'reply':
+                                this.refer = k
+                                break
+                        }
+                    })
+                }
             }
         }
+    }
+
+    isRoot() {
+        return !this.root && !this.refer
     }
 
     setRefer(refer: string) {
