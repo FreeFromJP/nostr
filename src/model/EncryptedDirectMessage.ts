@@ -3,19 +3,19 @@ import { Kind } from 'nostr-tools'
 
 import type { Keys } from '../core/account/Keys'
 import { BaseEvent } from '../core/event/Event'
-import Tags, { MarkerType } from '../core/event/Tags'
 
 export default class EncryptedDirectMessage extends BaseEvent {
     constructor(opts: { plaintext: string; recipients: string; replyId?: string; relay?: string }) {
-        const tags = new Tags()
+        const tags: string[][] = []
+
+        tags.push(['p', opts.recipients])
+
         if (opts.replyId) {
-            tags.addEvent(opts.replyId, opts.relay || '', MarkerType.REPLY)
+            tags.push(['e', opts.replyId, opts.relay || '', 'reply'])
         }
-        tags.addPubkey(opts.recipients)
-        const tagsArray = tags.toArray()
 
         super({
-            tags: tagsArray,
+            tags: tags,
             kind: Kind.EncryptedDirectMessage,
             content: '',
         } as Event)
@@ -31,8 +31,9 @@ export default class EncryptedDirectMessage extends BaseEvent {
         if (event.kind !== Kind.EncryptedDirectMessage) {
             throw new Error(`Must be an kind-${Kind.EncryptedDirectMessage}: encrypted direct message`)
         }
-        const tags = Tags.fromArray(event.tags)
-        const recipients = tags.getPubkeys()[0]
+
+        const recipientsTags = event.tags.filter((t) => t[0] === 'p')[0]
+        const recipients = recipientsTags && recipientsTags[0]
 
         const edm = new EncryptedDirectMessage({
             plaintext: '',
@@ -51,6 +52,9 @@ export default class EncryptedDirectMessage extends BaseEvent {
         if (this.content) {
             return this.content
         }
+        if (!this.recipients) {
+            return ''
+        }
 
         this.pubkey = keys.pubkey()
         this.content = await keys.encrypt(this.recipients, this.plaintext)
@@ -61,8 +65,21 @@ export default class EncryptedDirectMessage extends BaseEvent {
         if (this.plaintext) {
             return this.plaintext
         }
+        if (!this.recipients) {
+            return ''
+        }
 
         this.plaintext = await keys.decrypt(this.recipients, this.content)
         return this.plaintext
+    }
+
+    toUnsignedEvent(): Event {
+        const event = new BaseEvent({
+            kind: this.kind,
+            content: this.content,
+            tags: this.tags,
+            created_at: this.created_at,
+        } as Event)
+        return event
     }
 }
