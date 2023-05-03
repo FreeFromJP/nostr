@@ -1,7 +1,7 @@
 import { nip19 } from 'nostr-tools'
 
 import { BaseEvent, EventFinalized, KnownEventKind } from '../core/event/Event'
-import { MetaOpts } from '../core/event/EventBuilder'
+import { MetaOpts, toMetadata } from '../core/event/EventBuilder'
 import Nip05 from '../core/utils/Nip05'
 
 export default class Profile {
@@ -51,5 +51,22 @@ export default class Profile {
         }
         this.nip05.verified = await Nip05.verify(nip19.decode(this.pubkey).data as string, this.nip05.url)
         return this.nip05.verified
+    }
+
+    toUnsignedEvent(): BaseEvent {
+        const event = new BaseEvent()
+        const ops: MetaOpts = {
+            name: this.name,
+            display_name: this.display_name,
+            picture: this.picture,
+            banner: this.banner,
+            about: this.about,
+            website: this.website,
+            nip05: this.nip05?.url,
+            lud06: this.lud06,
+            lud16: this.lud16,
+        }
+        event.modify(toMetadata, ops)
+        return event
     }
 }

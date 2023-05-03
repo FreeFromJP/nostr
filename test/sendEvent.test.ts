@@ -3,7 +3,9 @@ import { BaseEvent } from 'src/core/event/Event'
 import { contacts, relayInfo, toContact, toDM, toMetadata, toNote } from 'src/core/event/EventBuilder'
 import { MetaOpts } from 'src/core/event/EventBuilder'
 import { toReaction, toRepost } from 'src/core/event/EventBuilder'
-import { NostrClient } from 'src/index'
+import { now } from 'src/core/utils/Misc'
+import { NostrClient, Profile } from 'src/index'
+import { Contact } from 'src/index'
 import Note from 'src/model/Note'
 
 import { settings } from '../testHelper/settings'
@@ -13,7 +15,7 @@ const otherPubkeyRaw = '6961db6aec05b27aa1db28b96b0130e6805c357e47d731533ec4ac97
 
 const keys = new Keys(settings.privkeyEncoded)
 
-test('Test send note', async () => {
+test('Test send DM', async () => {
     const client = new NostrClient(settings.relays)
     const event = new BaseEvent()
     await event.modify(toDM, keys, otherPubkeyRaw, 'hello: 9')
@@ -31,11 +33,24 @@ const meta: MetaOpts = {
     about: 'The lord of human kind',
 }
 
+//using toContact directly is deprecated, you can use Contact.toUnsignedEvent() instead
 test('Test send profile', async () => {
     const client = new NostrClient(settings.relays)
     const keys = new Keys(settings.privkeyEncoded)
     const event = new BaseEvent()
     await event.modify(toMetadata, meta)
+    event.signByKey(keys)
+    await client.publish(event)
+    await sleep(500)
+    client.close()
+})
+
+test('Test send profile by model', async () => {
+    const client = new NostrClient(settings.relays)
+    const keys = new Keys(settings.privkeyEncoded)
+    const profile = new Profile(settings.privkeyEncoded, { name: 'Sleepy Doge' }, now())
+    profile.about = 'a lazy doge'
+    const event = profile.toUnsignedEvent()
     event.signByKey(keys)
     await client.publish(event)
     await sleep(500)
@@ -80,11 +95,29 @@ const contacts = [
     ['p', '498e954bcd0c26e46fc3bcc79ec422df277b6db728d6a3439fe7fcc0a4b97c4e', 'wss://relay.damus.io', 'wall2'],
 ]
 
+//using toContact directly is deprecated, you can use Contact.toUnsignedEvent() instead
 test('Test contact', async () => {
     const client = new NostrClient(settings.relays)
     const keys = new Keys(settings.privkeyEncoded)
     const event = new BaseEvent()
     await event.modify(toContact, relayInfo, contacts)
+    event.signByKey(keys)
+    await client.publish(event)
+    await sleep(500)
+    client.close()
+})
+
+test('Test contact by model', async () => {
+    const client = new NostrClient(settings.relays)
+    const keys = new Keys(settings.privkeyEncoded)
+    const contact = new Contact({}, [], now())
+    contact.relays.push({ url: 'wss://relay.nostr.band', read: true, write: true })
+    contact.contacts.push({
+        pubkeyRaw: '498e954bcd0c26e46fc3bcc79ec422df277b6db728d6a3439fe7fcc0a4b97c4e',
+        mainRelay: 'wss://relay.damus.io',
+        petname: 'wall2',
+    })
+    const event = contact.toUnsignedEvent()
     event.signByKey(keys)
     await client.publish(event)
     await sleep(500)

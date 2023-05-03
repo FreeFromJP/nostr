@@ -1,5 +1,5 @@
 import { BaseEvent, EventFinalized, KnownEventKind } from 'src/core/event/Event'
-import { contacts, relayInfo } from 'src/core/event/EventBuilder'
+import { contacts, relayInfo, toContact } from 'src/core/event/EventBuilder'
 
 type relay = {
     url: string
@@ -46,5 +46,19 @@ export default class Contact {
             throw new Error('parse contacts error')
         }
         return new Contact(relays, contacts, eventObj.created_at)
+    }
+
+    toUnsignedEvent(): BaseEvent {
+        const event = new BaseEvent()
+        const info: relayInfo = {}
+        this.relays.forEach((r) => {
+            info[r.url] = { read: r.read, write: r.write }
+        })
+        const cons: contacts = []
+        this.contacts.forEach((c) => {
+            cons.push(['p', c.pubkeyRaw, c.mainRelay, c.petname])
+        })
+        event.modify(toContact)
+        return event
     }
 }
