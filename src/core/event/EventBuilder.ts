@@ -69,10 +69,22 @@ export async function toContact(event: BaseEvent, relays: relayInfo, contacts: c
 }
 
 //kind-4 DM
-export async function toDM(event: BaseEvent, keys: Keys, otherPubkeyRaw: string, plainText: string) {
+export async function toDM(
+    event: BaseEvent,
+    keys: Keys,
+    otherPubkeyRaw: string,
+    plainText: string,
+    opts?: {
+        relay?: string
+        replyId?: string
+    },
+) {
     event.kind = KnownEventKind.DM
     event.content = await keys.encrypt(otherPubkeyRaw, plainText)
     event.tags = [['p', otherPubkeyRaw]]
+    if (opts?.replyId) {
+        event.tags.push(['e', opts.replyId, opts.relay || '', 'reply'])
+    }
 }
 
 //kind-6 repost
