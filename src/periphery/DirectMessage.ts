@@ -1,23 +1,29 @@
-import type { Event, Filter } from 'nostr-tools'
+import type { Filter } from 'nostr-tools'
 import { Kind, Sub } from 'nostr-tools'
 
+import { Keys } from '../core/account/Keys'
+import EncryptedDirectMessage from '../model/EncryptedDirectMessage'
 import type NostrClient from '../periphery/NostrClient'
 
 export default class DirectMessage {
-    constructor(opts: { client: NostrClient; pubkey?: string }) {
+    constructor(opts: { client: NostrClient; pubkey: string } | { client: NostrClient; keys: Keys }) {
         this.client = opts.client
-        this.pubkey = opts.pubkey
+        // @ts-ignore
+        this.keys = opts.keys
+        // @ts-ignore
+        this.pubkey = opts.keys ? opts.keys.pubkeyRaw : opts.pubkey
     }
 
     client: NostrClient
-    pubkey: string | undefined
+    pubkey: string
+    keys: Keys | undefined
 
-    async history(opts: { rescipients: string; pubkey?: string; limit?: number; until: number }): Promise<Event[]> {
-        const { rescipients, until, pubkey = this.pubkey, limit = 10 } = opts
+    eventListeners: Set<any> = new Set()
 
-        if (!pubkey) {
-            throw new Error('Pubkey is required')
-        }
+    async history(opts: { rescipients: string; limit?: number; until: number }): Promise<EncryptedDirectMessage[]> {
+        const { rescipients, until, limit = 10 } = opts
+        const pubkey = this.pubkey
+
         if (!rescipients) {
             throw new Error('rescipients is required')
         }
@@ -32,15 +38,20 @@ export default class DirectMessage {
 
         const list = await this.client.fetch([filter])
 
-        return list
+        const data = list.map(async (e) => {
+            const dm = EncryptedDirectMessage.from(e)
+            if (this.keys) {
+                await dm.decryptContent(this.keys)
+            }
+            return dm
+        })
+
+        return await Promise.all(data)
     }
 
-    subscribe(opts: { pubkey?: string; limit?: number; since?: number }): Sub {
-        const { pubkey = this.pubkey, limit = 500, since } = opts
-
-        if (!pubkey) {
-            throw new Error('Pubkey is required')
-        }
+    subscribe(opts: { limit?: number; since?: number }): Sub {
+        const { limit = 500, since } = opts
+        const pubkey = this.pubkey
 
         const filter1: Filter = {
             kinds: [Kind.EncryptedDirectMessage],
@@ -57,6 +68,30 @@ export default class DirectMessage {
 
         const sub = this.client.subscribe([filter1, filter2])
 
-        return sub
+        sub.on('event', async (e) => {
+            const dm = EncryptedDirectMessage.from(e)
+            if (this.keys) {
+                await dm.decryptContent(this.keys)
+            }
+            for (const cb of this.eventListeners.values()) cb(dm)
+        })
+
+        return {
+            ...sub,
+            on(type, cb) {
+                if (type === 'event') {
+                    this.eventListeners.add(cb)
+                } else {
+                    sub.on(type, cb)
+                }
+            },
+            off(type, cb) {
+                if (type === 'event') {
+                    this.eventListeners.delete(cb)
+                } else {
+                    sub.off(type, cb)
+                }
+            },
+        }
     }
 }
