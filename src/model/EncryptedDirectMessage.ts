@@ -33,7 +33,7 @@ export default class EncryptedDirectMessage extends BaseEvent {
         }
 
         const recipientsTags = event.tags.filter((t) => t[0] === 'p')[0]
-        const recipients = recipientsTags && recipientsTags[0]
+        const recipients = recipientsTags && recipientsTags[1]
 
         const edm = new EncryptedDirectMessage({
             plaintext: '',
@@ -44,6 +44,7 @@ export default class EncryptedDirectMessage extends BaseEvent {
         edm.pubkey = event.pubkey
         edm.id = event.id
         edm.sig = event.sig
+        edm.created_at = event.created_at
 
         return edm
     }
