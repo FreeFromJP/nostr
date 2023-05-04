@@ -6,21 +6,21 @@ import EncryptedDirectMessage from '../model/EncryptedDirectMessage'
 import type NostrClient from '../periphery/NostrClient'
 
 export default class DirectMessage {
-    constructor(opts: { client: NostrClient; pubkey: string } | { client: NostrClient; keys: Keys }) {
+    constructor(opts: { client: NostrClient; keys: Keys }) {
         this.client = opts.client
         // @ts-ignore
         this.keys = opts.keys
         // @ts-ignore
-        this.pubkey = opts.keys ? opts.keys.pubkeyRaw : opts.pubkey
+        this.pubkey = opts.keys.pubkeyRaw
     }
 
     client: NostrClient
     pubkey: string
-    keys: Keys | undefined
+    keys: Keys
 
     eventListeners: Set<any> = new Set()
 
-    async history(opts: { rescipients: string; limit?: number; until: number }): Promise<EncryptedDirectMessage[]> {
+    async history(opts: { rescipients: string; limit?: number; until?: number }): Promise<EncryptedDirectMessage[]> {
         const { rescipients, until, limit = 10 } = opts
         const pubkey = this.pubkey
 
@@ -40,9 +40,7 @@ export default class DirectMessage {
 
         const data = list.map(async (e) => {
             const dm = EncryptedDirectMessage.from(e)
-            if (this.keys) {
-                await dm.decryptContent(this.keys)
-            }
+            await dm.decryptContent(this.keys)
             return dm
         })
 
@@ -70,22 +68,20 @@ export default class DirectMessage {
 
         sub.on('event', async (e) => {
             const dm = EncryptedDirectMessage.from(e)
-            if (this.keys) {
-                await dm.decryptContent(this.keys)
-            }
+            await dm.decryptContent(this.keys)
             for (const cb of this.eventListeners.values()) cb(dm)
         })
 
         return {
             ...sub,
-            on(type, cb) {
+            on: (type, cb) => {
                 if (type === 'event') {
                     this.eventListeners.add(cb)
                 } else {
                     sub.on(type, cb)
                 }
             },
-            off(type, cb) {
+            off: (type, cb) => {
                 if (type === 'event') {
                     this.eventListeners.delete(cb)
                 } else {
