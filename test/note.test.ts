@@ -17,5 +17,5 @@ const event = {
 test('Test read into Note', () => {
     const note = new Note(event)
     console.log(note)
-    expect(note.nip10.refer == '12fb302d5c729bfb20d1041430a2557207b5b26e0c8df5a3b18e60a3c047011d')
+    expect(note.nip10.refer === '12fb302d5c729bfb20d1041430a2557207b5b26e0c8df5a3b18e60a3c047011d')
 })
