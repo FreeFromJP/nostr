@@ -74,7 +74,7 @@ export default class EncryptedDirectMessage extends BaseEvent {
         return this.plaintext
     }
 
-    toUnsignedEvent(): Event {
+    toUnsignedEvent(): BaseEvent {
         const event = new BaseEvent({
             kind: this.kind,
             content: this.content,
