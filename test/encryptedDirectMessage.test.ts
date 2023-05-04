@@ -83,10 +83,14 @@ describe('EncryptedDirectMessage', () => {
         })
 
         const keys = new Keys(authorPrikeyNesc)
-        await dm.encryptContent(keys)
+        const content = await dm.encryptContent(keys)
 
         const plaintext = await nip04.decrypt(recipientsPrikey, authorPubkey, dm.content)
 
+        const plainEvent = dm.toUnsignedEvent()
+
         expect(dm.plaintext).toEqual(plaintext)
+        expect(dm.content).toEqual(content)
+        expect(plainEvent.content).toEqual(content)
     })
 })
