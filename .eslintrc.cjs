@@ -22,6 +22,7 @@ module.exports = {
     'simple-import-sort/imports': 'error',
     'unused-imports/no-unused-imports': 'error',
     '@typescript-eslint/no-namespace': 'off',
-    '@typescript-eslint/ban-ts-comment': 'off'
+    '@typescript-eslint/ban-ts-comment': 'off',
+    'eqeqeq': ['error', "always"],
   },
 }

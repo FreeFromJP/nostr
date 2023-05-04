@@ -14,11 +14,12 @@
     "noImplicitAny": true,
     "noImplicitThis": false,
 
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "removeComments": false,
+    "strictNullChecks": true,
     "lib": ["esnext", "dom"],
     "paths": {
       "src/*": ["src/*"],
