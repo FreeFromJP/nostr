@@ -8,9 +8,11 @@ export * from './core/utils/Nip05'
 export { default as NIP10 } from './core/utils/Nip10'
 //model
 export { default as Contact } from './model/Contact'
+export { default as EncryptedDirectMessage } from './model/EncryptedDirectMessage'
 export { default as Note } from './model/Note'
 export { default as Profile } from './model/Profile'
 //perihery
+export { default as DirectMessage } from './periphery/DirectMessage'
 export * from './periphery/eventFetcher'
 export { default as Following } from './periphery/Following'
 export { default as NostrClient } from './periphery/NostrClient'
