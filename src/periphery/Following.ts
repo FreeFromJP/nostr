@@ -30,7 +30,7 @@ export default class Following {
             authors: this.followingPubkeysRaw,
             limit: limit,
         }
-        if (until != null) {
+        if (until !== null && until !== undefined) {
             filter_fetch_history.until = until
         } else if (this.notes.length > 0) {
             filter_fetch_history.until = this.notes[this.notes.length - 1].created_at
@@ -49,7 +49,7 @@ export default class Following {
      * @param since: created_at exclusive
      */
     sub4Incoming(client: NostrClient, cb: (m: Note) => void, since?: number) {
-        if (this.sub != null) {
+        if (this.sub) {
             this.sub.unsub()
         }
         const filter_sub: Filter = {
@@ -57,7 +57,7 @@ export default class Following {
             authors: this.followingPubkeysRaw,
             limit: 0,
         }
-        if (since != null) {
+        if (since !== null && since !== undefined) {
             filter_sub.since = since
         } else if (this.notes.length > 0) {
             filter_sub.since = this.notes[0].created_at

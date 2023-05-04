@@ -14,9 +14,9 @@ export default class NIP10 {
 
     constructor(tags?: Tags) {
         if (tags && tags.length > 0) {
-            const p_tags = tags.filter((t) => t[0] == 'p')
+            const p_tags = tags.filter((t) => t[0] === 'p')
             if (p_tags.length > 0) this.p_tags = p_tags.map((x) => x[1])
-            const e_tags = tags.filter((t) => t[0] == 'e')
+            const e_tags = tags.filter((t) => t[0] === 'e')
             //todo detect which version old or new?
             if (e_tags.length > 0) {
                 if (e_tags[0].length < 4) {
@@ -29,7 +29,7 @@ export default class NIP10 {
                             this.memtions = e_tags.slice(1, e_tags.length - 1).map((x) => x[1])
                             this.refer = e_tags[e_tags.length - 1][1]
                     }
-                } else if (e_tags[0].length == 4) {
+                } else if (e_tags[0].length === 4) {
                     e_tags.forEach((t) => {
                         const [, k, , m] = t
                         switch (m) {
@@ -67,11 +67,11 @@ export default class NIP10 {
 
     toTags(): Tags {
         const tags: Tags = []
-        if (this.root != null) tags.push(['e', this.root, '', 'root'])
+        if (this.root) tags.push(['e', this.root, '', 'root'])
         this.memtions.forEach((m) => {
             tags.push(['e', m, '', 'mention'])
         })
-        if (this.refer != null) tags.push(['e', this.refer, '', 'reply'])
+        if (this.refer) tags.push(['e', this.refer, '', 'reply'])
         this.p_tags.forEach((p) => {
             tags.push(['p', p])
         })

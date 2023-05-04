@@ -103,7 +103,7 @@ export class SortedSet<T> extends SortedArray<T> {
         const id = this.hash(value)
         const indexes = this.findAllIndexes(value)
         for (const index of indexes) {
-            if (this.hash(this.get(index) as T) == id) {
+            if (this.hash(this.get(index) as T) === id) {
                 this.data.splice(index, 1)
                 this.hashSet.delete(id)
                 break
@@ -119,7 +119,7 @@ export class SortedSet<T> extends SortedArray<T> {
         const id = this.hash(value)
         const indexes = this.findAllIndexes(value)
         for (const index of indexes) {
-            if (this.hash(this.get(index) as T) == id) return index
+            if (this.hash(this.get(index) as T) === id) return index
         }
         return -1
     }

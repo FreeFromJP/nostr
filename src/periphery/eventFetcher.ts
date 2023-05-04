@@ -18,7 +18,7 @@ export async function fetchProfiles(client: NostrClient, pubkeys: string[]): Pro
     const profileUnchecked = results.map((x) => Profile.from(x) as Profile)
     const collections: { [pubkey: string]: Profile } = {}
     profileUnchecked.forEach((p) => {
-        if (collections[p.pubkey] == undefined) {
+        if (collections[p.pubkey] === undefined) {
             collections[p.pubkey] = p
         } else {
             collections[p.pubkey] = collections[p.pubkey].lastUpdatedAt > p.lastUpdatedAt ? collections[p.pubkey] : p
@@ -33,8 +33,8 @@ export async function fetchContact(client: NostrClient, pubkeyRaw: string): Prom
         authors: [pubkeyRaw],
     }
     const results = await client.fetch([filter])
-    if (results.length == 0) return null
-    if (results.length == 1) return Contact.from(results[0])
+    if (results.length === 0) return null
+    if (results.length === 1) return Contact.from(results[0])
     const latest = results.reduce((a, b) => (a.created_at > b.created_at ? a : b))
     return Contact.from(latest)
 }
@@ -63,7 +63,7 @@ export async function fetchRepliesOrdered(
         filter.until = until
     }
     const results = await client.fetch([filter])
-    if (results.length == 0) return []
+    if (results.length === 0) return []
     return results.sort((a, b) => a.created_at - b.created_at).map((n) => new Note(n))
 }
 

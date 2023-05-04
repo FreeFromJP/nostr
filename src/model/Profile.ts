@@ -35,15 +35,15 @@ export default class Profile {
     }
 
     static from(event: EventFinalized) {
-        if (event.kind != KnownEventKind.METADATA) throw new Error('kind-1 event expected')
+        if (event.kind !== KnownEventKind.METADATA) throw new Error('kind-1 event expected')
         const eventObj = new BaseEvent(event)
         const metadata = JSON.parse(event.content) as MetaOpts
         return new Profile(nip19.npubEncode(eventObj.pubkey), metadata, eventObj.created_at)
     }
 
     async isNip05Verified() {
-        if (this.nip05 == null) return false
-        if (this.nip05.verified != null) {
+        if (!this.nip05) return false
+        if (this.nip05.verified) {
             return this.nip05.verified
         }
         if (!this.nip05.url) {

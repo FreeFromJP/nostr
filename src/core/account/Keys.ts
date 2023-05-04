@@ -8,8 +8,8 @@ export class Keys {
     privkeyRaw: string
     //npub or nsec
     constructor(keyString?: string) {
-        if (keyString != null) {
-            if (keyString.length != 63) throw 'key length invalid'
+        if (keyString !== undefined) {
+            if (keyString.length !== 63) throw 'key length invalid'
             if (keyString.startsWith(PUBKEY_PREFIX)) {
                 this.pubkeyRaw = decodeKey(keyString)
                 this.privkeyRaw = ''
@@ -31,21 +31,21 @@ export class Keys {
     }
 
     privkey() {
-        return this.privkeyRaw != '' ? nip19.nsecEncode(this.privkeyRaw) : ''
+        return this.privkeyRaw ? nip19.nsecEncode(this.privkeyRaw) : ''
     }
 
     canSign() {
-        return this.privkeyRaw != ''
+        return Boolean(this.privkeyRaw)
     }
 
     //for DM
     async encrypt(otherPubkeyRaw: string, content: string) {
-        if (this.privkeyRaw == '') throw new Error('can not encrypt')
+        if (!this.privkeyRaw) throw new Error('can not encrypt')
         return await nip04.encrypt(this.privkeyRaw, otherPubkeyRaw, content)
     }
 
     decrypt(otherPubkeyRaw: string, content: string) {
-        if (this.privkeyRaw == '') throw new Error('can not decrypt')
+        if (!this.privkeyRaw) throw new Error('can not decrypt')
         return nip04.decrypt(this.privkeyRaw, otherPubkeyRaw, content)
     }
 }

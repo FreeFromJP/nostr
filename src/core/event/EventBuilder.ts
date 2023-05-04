@@ -32,12 +32,12 @@ export async function toReply(event: BaseEvent, referEvent: BaseEvent, content: 
     event.content = content
     const nip10 = new NIP10(referEvent.tags)
     //reply to root
-    if (nip10.root == null && nip10.refer == null) {
+    if (!nip10.root && !nip10.refer) {
         //do nothing
-    } else if (nip10.root == null && nip10.refer != null) {
+    } else if (!nip10.root && nip10.refer) {
         //reply to level 1 child
         nip10.root = nip10.refer
-    } else if (nip10.root != null && nip10.refer != null) {
+    } else if (nip10.root && nip10.refer) {
         nip10.addMentions([nip10.refer])
     } else {
         throw new Error('Relpy to invaild content')
@@ -91,7 +91,7 @@ export async function toDM(
 export async function toRepost(event: BaseEvent, orgEvent: EventFinalized) {
     event.kind = KnownEventKind.REPOST
     event.content = JSON.stringify(orgEvent)
-    const tags: Tags = orgEvent.tags.filter((t) => t[0] == 'p')
+    const tags: Tags = orgEvent.tags.filter((t) => t[0] === 'p')
     tags.unshift(['e', orgEvent.id])
     tags.push(['p', orgEvent.pubkey])
 }
@@ -100,8 +100,8 @@ export async function toRepost(event: BaseEvent, orgEvent: EventFinalized) {
 export async function toReaction(event: BaseEvent, orgEvent: EventFinalized, emoji: string) {
     event.kind = KnownEventKind.REACTION
     event.content = emoji
-    const e_tags: Tags = orgEvent.tags.filter((t) => t[0] == 'e')
-    const p_tags: Tags = orgEvent.tags.filter((t) => t[0] == 'p')
+    const e_tags: Tags = orgEvent.tags.filter((t) => t[0] === 'e')
+    const p_tags: Tags = orgEvent.tags.filter((t) => t[0] === 'p')
     event.tags = e_tags
         .concat([['e', orgEvent.id]])
         .concat(p_tags)

@@ -18,7 +18,7 @@ export default class Thread {
             this.collection[x.id] = x
         })
         const traverse = (note: Note) => {
-            const repliesInFork = result.filter((x) => x.nip10.refer == note.id)
+            const repliesInFork = result.filter((x) => x.nip10.refer === note.id)
             repliesInFork.forEach((n) => {
                 note.addReply(n)
                 traverse(n)
@@ -28,7 +28,7 @@ export default class Thread {
     }
 
     unscrollReplies(note: Note): Note[] {
-        if (this.collection[note.id] == null) return []
+        if (!this.collection[note.id]) return []
         return note.traverseNotes()
     }
 }

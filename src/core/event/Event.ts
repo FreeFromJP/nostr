@@ -63,7 +63,7 @@ export class BaseEvent {
     }
 
     hash() {
-        if (this.id == '') this.id = getEventHash(this)
+        if (!this.id) this.id = getEventHash(this)
     }
 
     async modify(modFn: mod, ...opts: any) {
