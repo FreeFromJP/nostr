@@ -38,7 +38,7 @@ export class BaseEvent {
     sig: string
 
     constructor(event?: Event) {
-        if (event) {
+        if (event && event.sig) {
             if (!validate(event)) throw new Error('pares error!')
             this.id = event.id
             this.pubkey = event.pubkey
@@ -48,13 +48,13 @@ export class BaseEvent {
             this.content = event.content
             this.sig = event.sig
         } else {
-            this.id = ''
-            this.pubkey = ''
-            this.created_at = now()
-            this.kind = -1
-            this.tags = []
-            this.content = ''
-            this.sig = ''
+            this.id = event?.id || ''
+            this.pubkey = event?.pubkey || ''
+            this.created_at = event?.created_at || now()
+            this.kind = event?.kind || -1
+            this.tags = event?.tags || []
+            this.content = event?.content || ''
+            this.sig = event?.sig || ''
         }
     }
 
