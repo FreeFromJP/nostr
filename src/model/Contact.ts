@@ -58,7 +58,7 @@ export default class Contact {
         this.contacts.forEach((c) => {
             cons.push(['p', c.pubkeyRaw, c.mainRelay, c.petname])
         })
-        event.modify(toContact)
+        event.modify(toContact, info, cons)
         return event
     }
 }
