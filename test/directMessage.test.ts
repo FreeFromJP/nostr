@@ -17,18 +17,20 @@ describe('DirectMessage', () => {
 
     it('should subscribe direct message', async () => {
         const dm = new DirectMessage({
-            client: pool,
             keys: authorKeys,
         })
 
         const received: any[] = []
 
-        const sub = dm.subscribe({
-            limit: 0,
-        })
-        sub.on('event', (e) => {
-            received.push(e)
-        })
+        dm.subscribe(
+            pool,
+            (e) => {
+                received.push(e)
+            },
+            {
+                limit: 0,
+            },
+        )
 
         const edm = new EncryptedDirectMessage({
             recipients: rescipients,
@@ -38,7 +40,7 @@ describe('DirectMessage', () => {
         edm.signByKey(authorKeys)
         const event = edm.finalized()
 
-        await dm.client.publish(event)
+        await pool.publish(event)
 
         await sleep(2000)
 
@@ -47,11 +49,10 @@ describe('DirectMessage', () => {
 
     it('should fetch history', async () => {
         const dm = new DirectMessage({
-            client: pool,
             keys: authorKeys,
         })
 
-        const received = await dm.history({
+        const received = await dm.history(pool, {
             rescipients: rescipients,
             limit: 2,
         })
@@ -62,9 +63,7 @@ describe('DirectMessage', () => {
                 .reduce((acc, n) => (acc.indexOf(n) !== -1 ? acc : [...acc, n]), [] as string[]).length,
         )
 
-        const relaysForAllEvents = received
-            .map((event) => dm.client.seenOn(event.id))
-            .reduce((acc, n) => acc.concat(n), [])
+        const relaysForAllEvents = received.map((event) => pool.seenOn(event.id)).reduce((acc, n) => acc.concat(n), [])
         expect(relaysForAllEvents.length).toBeGreaterThanOrEqual(received.length)
     })
 })

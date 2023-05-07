@@ -6,21 +6,19 @@ import EncryptedDirectMessage from '../model/EncryptedDirectMessage'
 import type NostrClient from '../periphery/NostrClient'
 
 export default class DirectMessage {
-    constructor(opts: { client: NostrClient; keys: Keys }) {
-        this.client = opts.client
-        // @ts-ignore
+    constructor(opts: { keys: Keys }) {
         this.keys = opts.keys
-        // @ts-ignore
         this.pubkey = opts.keys.pubkeyRaw
     }
 
-    client: NostrClient
     pubkey: string
-    keys: Keys
+    private keys: Keys
+    sub?: Sub
 
-    eventListeners: Set<any> = new Set()
-
-    async history(opts: { rescipients: string; limit?: number; until?: number }): Promise<EncryptedDirectMessage[]> {
+    async history(
+        client: NostrClient,
+        opts: { rescipients: string; limit?: number; until?: number },
+    ): Promise<EncryptedDirectMessage[]> {
         const { rescipients, until, limit = 10 } = opts
         const pubkey = this.pubkey
 
@@ -36,7 +34,7 @@ export default class DirectMessage {
             until: until,
         }
 
-        const list = await this.client.fetch([filter])
+        const list = await client.fetch([filter])
 
         const data = list.map(async (e) => {
             const dm = EncryptedDirectMessage.from(e)
@@ -47,7 +45,15 @@ export default class DirectMessage {
         return await Promise.all(data)
     }
 
-    subscribe(opts: { limit?: number; since?: number }): Sub {
+    subscribe(
+        client: NostrClient,
+        cb: (e: EncryptedDirectMessage) => void,
+        opts: { limit?: number; since?: number },
+    ): void {
+        if (this.sub) {
+            this.sub.unsub()
+        }
+
         const { limit = 500, since } = opts
         const pubkey = this.pubkey
 
@@ -64,30 +70,12 @@ export default class DirectMessage {
             since: since,
         }
 
-        const sub = this.client.subscribe([filter1, filter2])
+        const sub = client.subscribe([filter1, filter2])
 
         sub.on('event', async (e) => {
             const dm = EncryptedDirectMessage.from(e)
             await dm.decryptContent(this.keys)
-            for (const cb of this.eventListeners.values()) cb(dm)
+            cb(dm)
         })
-
-        return {
-            ...sub,
-            on: (type, cb) => {
-                if (type === 'event') {
-                    this.eventListeners.add(cb)
-                } else {
-                    sub.on(type, cb)
-                }
-            },
-            off: (type, cb) => {
-                if (type === 'event') {
-                    this.eventListeners.delete(cb)
-                } else {
-                    sub.off(type, cb)
-                }
-            },
-        }
     }
 }
