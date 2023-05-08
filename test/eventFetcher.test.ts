@@ -1,5 +1,5 @@
 import { NostrClient } from 'src/index'
-import { fetchProfiles } from 'src/periphery/eventFetcher'
+import { fetchContact, fetchProfiles } from 'src/periphery/eventFetcher'
 import WebSocket from 'ws'
 
 import { settings } from '../testHelper/settings'
@@ -15,4 +15,11 @@ test('Test fetch profiles', async () => {
     console.log(results, Object.keys(results).length)
     client.close()
     expect(pubkeys.length).toBe(Object.keys(results).length)
+})
+
+test('Test fetch contact', async () => {
+    const client = new NostrClient(settings.relays)
+    const results = await fetchContact(client, '8e9595d0e0d6b29ed24fe4a71ff7f0e0829e3b8c080ffb27b47e56bee9baa26b')
+    console.log(results)
+    client.close()
 })

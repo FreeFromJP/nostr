@@ -33,12 +33,16 @@ export default class Contact {
 
     static from(event: EventFinalized) {
         if (event.kind !== KnownEventKind.CONTACT) throw new Error('kind-3 event expected')
-        let relays: relayInfo
+        let relays: relayInfo = {}
         let contacts: contacts = []
         const eventObj = new BaseEvent(event)
         try {
             //todo add checks
-            relays = JSON.parse(event.content) as relayInfo
+            try {
+                relays = JSON.parse(event.content) as relayInfo
+            } catch (e) {
+                //pass
+            }
             if (event.tags.length > 0) {
                 contacts = event.tags.filter((x) => x[0] === 'p') as contacts
             }
