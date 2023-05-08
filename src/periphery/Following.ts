@@ -24,7 +24,7 @@ export default class Following {
      * @param cb: callback function when data fetched
      * @param until: created_at exclusive
      */
-    async digging(client: NostrClient, limit = 100, cb: (ms: Note[]) => void, until?: number) {
+    async digging(client: NostrClient, cb: (ms: Note[]) => void, limit = 100, until?: number) {
         const filter_fetch_history: Filter = {
             kinds: [KnownEventKind.NOTE],
             authors: this.followingPubkeysRaw,
@@ -48,14 +48,14 @@ export default class Following {
      * @param cb: callback function when new note arrived
      * @param since: created_at exclusive
      */
-    sub4Incoming(client: NostrClient, cb: (m: Note) => void, since?: number) {
+    sub4Incoming(client: NostrClient, cb: (m: Note) => void, limit = 100, since?: number) {
         if (this.sub) {
             this.sub.unsub()
         }
         const filter_sub: Filter = {
             kinds: [KnownEventKind.NOTE],
             authors: this.followingPubkeysRaw,
-            limit: 0,
+            limit: limit,
         }
         if (since !== null && since !== undefined) {
             filter_sub.since = since
@@ -84,7 +84,7 @@ export default class Following {
     async quickStart(client: NostrClient, limit = 100, cb1: (ms: Note[]) => void, cb2: (m: Note) => void) {
         this.notes = []
         const current = now()
-        await this.digging(client, limit, cb1, current)
-        this.sub4Incoming(client, cb2, current - 1)
+        await this.digging(client, cb1, limit, current)
+        this.sub4Incoming(client, cb2, 0, current - 1)
     }
 }
