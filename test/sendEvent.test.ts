@@ -1,6 +1,14 @@
 import { Keys } from 'src/core/account/Keys'
 import { BaseEvent } from 'src/core/event/Event'
-import { contacts, relayInfo, toContact, toDM, toMetadata, toNote } from 'src/core/event/EventBuilder'
+import {
+    addMentionProfile,
+    contacts,
+    relayInfo,
+    toContact,
+    toDM,
+    toMetadata,
+    toNote,
+} from 'src/core/event/EventBuilder'
 import { MetaOpts } from 'src/core/event/EventBuilder'
 import { toReaction, toRepost } from 'src/core/event/EventBuilder'
 import { now } from 'src/core/utils/Misc'
@@ -11,13 +19,11 @@ import Note from 'src/model/Note'
 import { settings } from '../testHelper/settings'
 import { sleep } from '../testHelper/utils'
 
-const otherPubkeyRaw = '6961db6aec05b27aa1db28b96b0130e6805c357e47d731533ec4ac97e5fcbebb'
-
-const keys = new Keys(settings.privkeyEncoded)
-
 test('Test send DM', async () => {
+    const otherPubkeyRaw = '6961db6aec05b27aa1db28b96b0130e6805c357e47d731533ec4ac97e5fcbebb'
     const client = new NostrClient(settings.relays)
     const event = new BaseEvent()
+    const keys = new Keys(settings.privkeyEncoded)
     await event.modify(toDM, keys, otherPubkeyRaw, 'hello: 9')
     event.signByKey(keys)
     await client.publish(event)
@@ -160,6 +166,18 @@ test('Test reaction', async () => {
     const event = new BaseEvent()
     const repostTo = new Note(rEvent)
     await event.modify(toReaction, repostTo.finalized(), '🐱')
+    event.signByKey(keys)
+    await client.publish(event)
+    await sleep(500)
+    client.close()
+})
+
+test('Test mention profile', async () => {
+    const client = new NostrClient(settings.relays)
+    const keys = new Keys(settings.privkeyEncoded)
+    const event = new BaseEvent()
+    event.modify(toNote, 'Testing, sorry to bother u: ')
+    event.modify(addMentionProfile, 28, '5fd693e61a7969ecf5c11dbf5ce20aedac1cea71721755b037955994bf6061bb', [])
     event.signByKey(keys)
     await client.publish(event)
     await sleep(500)

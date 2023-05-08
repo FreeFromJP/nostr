@@ -3,6 +3,7 @@ import { nip19 } from 'nostr-tools'
 import { BaseEvent, EventFinalized, KnownEventKind } from '../core/event/Event'
 import { MetaOpts, toMetadata } from '../core/event/EventBuilder'
 import Nip05 from '../core/utils/Nip05'
+import Contact from './Contact'
 
 export default class Profile {
     pubkey: string
@@ -19,6 +20,7 @@ export default class Profile {
         url?: string
         verified?: boolean
     }
+    contact?: Contact
 
     constructor(pubkey: string, metadata: MetaOpts, lastUpdatedAt: number) {
         this.pubkey = pubkey
@@ -32,6 +34,11 @@ export default class Profile {
         }
         this.lud06 = metadata.lud06
         this.lud16 = metadata.lud16
+    }
+
+    //add contact info if client happens to know
+    setContact(contact: Contact) {
+        this.contact = contact
     }
 
     static from(event: EventFinalized) {
