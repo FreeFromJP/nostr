@@ -2,7 +2,7 @@
     "name": "@freefrom/nostr",
     "version": "0.1.9",
     "main": "lib/index.js",
-    "types": "lib/index.d.ts",
+    "types": "lib/src/index.d.ts",
     "license": "Apache-2.0",
     "type": "module",
     "private": false,
