@@ -4,8 +4,12 @@ import { BaseEvent, EventFinalized } from '../core/event/Event'
 
 export default class Note extends BaseEvent {
     nip10: NIP10
+    //structure related
     replies: Note[] = []
     parent: Note | null
+    //display related
+    reactions?: EventFinalized[]
+    reposts = 0
     constructor(event: EventFinalized, parent: Note | null = null) {
         super(event)
         this.nip10 = new NIP10(event.tags)

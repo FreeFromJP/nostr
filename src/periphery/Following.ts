@@ -4,11 +4,25 @@ import Note from 'src/model/Note'
 
 import { decodeKey } from '../core/account/Keys'
 import { KnownEventKind } from '../core/event/Event'
+import { EventFinalized } from '../core/event/Event'
 import { sortDesc } from './Alignment'
 import NostrClient from './NostrClient'
+import Repost from './Repost'
+
+export type FollowingItem = Note | Repost
+
+function parse2Item(event: EventFinalized): FollowingItem {
+    if (event.kind === KnownEventKind.NOTE) {
+        return new Note(event)
+    } else if (event.kind === KnownEventKind.REPOST) {
+        return new Repost(event)
+    } else {
+        throw new Error('not a note nor repost')
+    }
+}
 
 export default class Following {
-    notes: Note[] = []
+    notes: FollowingItem[] = []
     followingPubkeysRaw: string[] = [] //if following changed, make a new one
     sub?: Sub
 
@@ -24,9 +38,9 @@ export default class Following {
      * @param cb: callback function when data fetched
      * @param until: created_at exclusive
      */
-    async digging(client: NostrClient, cb: (ms: Note[]) => void, limit = 100, until?: number) {
+    async digging(client: NostrClient, cb: (ms: FollowingItem[]) => void, limit = 100, until?: number) {
         const filter_fetch_history: Filter = {
-            kinds: [KnownEventKind.NOTE],
+            kinds: [KnownEventKind.NOTE, KnownEventKind.REPOST],
             authors: this.followingPubkeysRaw,
             limit: limit,
         }
@@ -37,7 +51,7 @@ export default class Following {
         }
 
         const results = await client.fetch([filter_fetch_history])
-        const newNotes = sortDesc(results).map((x) => new Note(x as Note))
+        const newNotes = sortDesc(results).map((x) => parse2Item(x as EventFinalized))
         this.notes = this.notes.concat(newNotes)
         cb(newNotes)
     }
@@ -48,7 +62,7 @@ export default class Following {
      * @param cb: callback function when new note arrived
      * @param since: created_at exclusive
      */
-    sub4Incoming(client: NostrClient, cb: (m: Note) => void, limit = 100, since?: number) {
+    sub4Incoming(client: NostrClient, cb: (m: FollowingItem) => void, limit = 100, since?: number) {
         if (this.sub) {
             this.sub.unsub()
         }
@@ -67,7 +81,7 @@ export default class Following {
 
         const sub = client.subscribe([filter_sub])
         sub.on('event', (event) => {
-            const note = new Note(event)
+            const note = parse2Item(event)
             this.notes.unshift(note)
             cb(note)
         })
@@ -81,7 +95,12 @@ export default class Following {
      * @param cb1: callback function for digging
      * @param cb2: callback function for sub
      */
-    async quickStart(client: NostrClient, limit = 100, cb1: (ms: Note[]) => void, cb2: (m: Note) => void) {
+    async quickStart(
+        client: NostrClient,
+        limit = 100,
+        cb1: (ms: FollowingItem[]) => void,
+        cb2: (m: FollowingItem) => void,
+    ) {
         this.notes = []
         const current = now()
         await this.digging(client, cb1, limit, current)
