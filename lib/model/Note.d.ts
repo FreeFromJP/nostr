@@ -4,6 +4,8 @@ export default class Note extends BaseEvent {
     nip10: NIP10;
     replies: Note[];
     parent: Note | null;
+    reactions?: EventFinalized[];
+    reposts: number;
     constructor(event: EventFinalized, parent?: Note | null);
     addReply(reply: Note): void;
     findAncestor(): Note | null;
