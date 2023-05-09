@@ -1,13 +1,13 @@
 import { Filter, Sub } from 'nostr-tools'
-import { now } from 'src/core/utils/Misc'
-import Note from 'src/model/Note'
 
 import { decodeKey } from '../core/account/Keys'
 import { KnownEventKind } from '../core/event/Event'
 import { EventFinalized } from '../core/event/Event'
+import { now } from '../core/utils/Misc'
+import Note from '../model/Note'
 import { sortDesc } from './Alignment'
 import NostrClient from './NostrClient'
-import Repost from './Repost'
+import { Repost } from './Repost'
 
 export type FollowingItem = Note | Repost
 
