@@ -1,6 +1,9 @@
 import { filter, includes, map, tail } from 'ramda'
 
-// return `now()` in unit *seconds*, and use `floor` to round down to an integer
+/**
+ * return `now()` in unit *seconds*, and use `floor` to round down to an integer
+ * @returns current timestamp in seconds
+ */
 export function now() {
     return Math.floor(Date.now() / 1000)
 }

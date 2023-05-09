@@ -1,5 +1,10 @@
+import { Keys } from 'src/core/account/Keys'
 import { getOptionalTagValueByName } from 'src/core/utils/Misc'
-import { BadgeDefinition } from 'src/model/Badge'
+import { KnownEventKind } from 'src/index'
+import { BadgeDefinition, BadgeImage } from 'src/model/Badge'
+
+import { settings } from '../../testHelper/settings'
+import { pushEvent } from '../../testHelper/utils'
 
 test('misc utility testing', () => {
     const testTags = [
@@ -34,10 +39,6 @@ test('parse badge definition from event', () => {
         pubkey: 'f8c42fd1e33523b37efc919bb46fdbd47377cde3941ffc374c5bc3eab23f9b80',
         sig: 'f3243e8348426ca95f7bf2c51bff998299e6668a684ceae9001dbeb2e7ddc6b7615b8aedc06c66f2d0a6dff9b2fa47ff622fa43d5ca3804de84e3e467c4440c8',
         tags: [
-            ['e', 'd35f33c19a6ed2a10d12a137c1aa4c72f14214701b4807e6d0fc26dc8a2dd039'],
-            ['e', '12fb302d5c729bfb20d1041430a2557207b5b26e0c8df5a3b18e60a3c047011d'],
-            ['p', '6961db6aec05b27aa1db28b96b0130e6805c357e47d731533ec4ac97e5fcbebb'],
-            ['p', '086174a3e2631dabdea2287e3f17d338b13507268e189821240e46b12c6044e3'],
             ['d', 'Public Sponsor'],
             ['name', 'Medal of Bravery'],
             ['description', 'Awarded to users demonstrating bravery'],
@@ -63,4 +64,60 @@ test('parse badge definition from event', () => {
     expect(demoBadgeDef?.thumbList[1].url).toBe('https://nostr.academy/awards/bravery_128x128.png')
     expect(demoBadgeDef?.thumbList[1].width).toBe(undefined)
     expect(demoBadgeDef?.thumbList[1].height).toBe(undefined)
+})
+
+test('badge definition publish', async () => {
+    const demoBadgeDef = new BadgeDefinition('Starstruck')
+    const event = demoBadgeDef.toEvent()
+
+    const keys = new Keys(settings.privkeyEncoded)
+    event.signByKey(keys)
+
+    if (false) {
+        await pushEvent(event)
+    }
+})
+
+test('badge definition to and from event', () => {
+    // minimal badge definition event
+    const minimalBadgeDefinition = new BadgeDefinition('Starstruck')
+    expect(minimalBadgeDefinition !== undefined).toBe(true)
+    expect(minimalBadgeDefinition?.id).toBe('Starstruck')
+
+    const mEvent = minimalBadgeDefinition.toEvent()
+    expect(mEvent.kind).toBe(KnownEventKind.BADGE_DEFINATION)
+    expect(mEvent.tags).toEqual([['d', 'Starstruck']])
+
+    const bd2 = BadgeDefinition.fromEvent(mEvent)
+    expect(bd2 !== undefined).toBe(true)
+    expect(bd2?.id).toBe('Starstruck')
+    expect(bd2?.name).toBeUndefined()
+    expect(bd2?.description).toBeUndefined()
+    expect(bd2?.highResImage).toBeUndefined()
+    expect(bd2?.thumbList).toHaveLength(0)
+
+    // full badge definition event
+    const fullBadgeDefinition = new BadgeDefinition('Demo', {
+        name: 'Demo Badge for Brave',
+        description: 'this is only a demo desc',
+        image: new BadgeImage('https://nostr.academy/awards/bravery.png', 1024, 1024),
+        thumbList: [
+            new BadgeImage('https://nostr.academy/awards/1.png'),
+            new BadgeImage('https://nostr.academy/awards/2.png', 256, 256),
+            new BadgeImage('https://nostr.academy/awards/3.png', 512, 512),
+        ],
+    })
+    const fev = fullBadgeDefinition.toEvent()
+    fev.created_at = 1
+
+    expect(fev.kind).toBe(KnownEventKind.BADGE_DEFINATION)
+    expect(fev.tags).toEqual([
+        ['d', 'Demo'],
+        ['name', 'Demo Badge for Brave'],
+        ['description', 'this is only a demo desc'],
+        ['image', 'https://nostr.academy/awards/bravery.png', '1024x1024'],
+        ['thumb', 'https://nostr.academy/awards/1.png'],
+        ['thumb', 'https://nostr.academy/awards/2.png', '256x256'],
+        ['thumb', 'https://nostr.academy/awards/3.png', '512x512'],
+    ])
 })
