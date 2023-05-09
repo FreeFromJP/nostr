@@ -13,7 +13,7 @@ export default {
     plugins: [
         typescript({
             module: 'esnext',
-            exclude: ['node_modules/**', 'test/*', 'testHelper/*'],
+            exclude: ['node_modules/**/*', 'test/**/*', 'testHelper/**/*'],
         }),
         uglify({
             compress: {
