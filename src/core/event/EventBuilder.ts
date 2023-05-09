@@ -1,5 +1,3 @@
-import { nip19 } from 'nostr-tools'
-
 import { Keys } from '../account/Keys'
 import NIP10 from '../utils/Nip10'
 import { BaseEvent, EventFinalized, KnownEventKind, Tags } from './Event'
@@ -110,14 +108,15 @@ export async function toReaction(event: BaseEvent, orgEvent: EventFinalized, emo
         .concat([['p', orgEvent.pubkey]])
 }
 
+//-- this is deprecated
 //add mention in content, using NIP-27, only support @profile now
-export async function addMentionProfile(
-    event: BaseEvent,
-    insertPosition: number,
-    pubkeyRaw: string,
-    relays?: string[],
-) {
-    const nprofile = 'nostr:' + nip19.nprofileEncode({ pubkey: pubkeyRaw, relays: relays })
-    event.content = event.content.slice(0, insertPosition) + ' ' + nprofile + ' ' + event.content.slice(insertPosition)
-    event.tags.push(['p', pubkeyRaw, '', 'mention'])
-}
+// export async function addMentionProfile(
+//     event: BaseEvent,
+//     insertPosition: number,
+//     pubkeyRaw: string,
+//     relays?: string[],
+// ) {
+//     const nprofile = 'nostr:' + nip19.nprofileEncode({ pubkey: pubkeyRaw, relays: relays })
+//     event.content = event.content.slice(0, insertPosition) + ' ' + nprofile + ' ' + event.content.slice(insertPosition)
+//     event.tags.push(['p', pubkeyRaw, '', 'mention'])
+// }

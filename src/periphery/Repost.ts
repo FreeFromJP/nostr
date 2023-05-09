@@ -5,7 +5,7 @@ import Note from '../model/Note'
 import NostrClient from '../periphery/NostrClient'
 
 //we place the class here instead in model because it may have fetch requests
-export class Repost extends BaseEvent {
+export default class Repost extends BaseEvent {
     orgNote?: Note //embed or not
 
     constructor(event: EventFinalized) {
