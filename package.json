@@ -58,7 +58,7 @@
     "homepage": "https://github.com/FreeFromJP/nostr",
     "author": "FreeFromJP <eospeng@gmail.com>",
     "files": [
-        "dist"
+        "lib"
     ],
     "publishConfig": {
         "access": "public",
