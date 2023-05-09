@@ -6,10 +6,10 @@ import del from 'rollup-plugin-delete'
 export default {
     input: 'src/index.ts',
     output: {
-        file: 'dist/index.js',
+        file: 'lib/index.js',
         format: 'es',
     },
-    external: ['nostr-tools'],
+    external: ['nostr-tools', 'ramda'],
     plugins: [
         typescript({
             module: 'esnext',
@@ -23,6 +23,6 @@ export default {
                 beautify: true,
             },
         }),
-        del({ targets: 'dist/*' }),
+        del({ targets: 'lib/*' }),
     ],
 }
