@@ -7,6 +7,8 @@ export { default as NIP05 } from './core/utils/Nip05'
 export * from './core/utils/Nip05'
 export { default as NIP10 } from './core/utils/Nip10'
 //model
+export { default as Channel } from './model/Channel'
+export { default as ChannelMessage } from './model/ChannelMessage'
 export { default as Contact } from './model/Contact'
 export { default as EncryptedDirectMessage } from './model/EncryptedDirectMessage'
 export { default as Note } from './model/Note'
