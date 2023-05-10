@@ -3,7 +3,13 @@ export declare const PRIKEY_PREFIX = "nsec";
 export declare class Keys {
     pubkeyRaw: string;
     privkeyRaw: string;
-    constructor(keyString?: string);
+    constructor(keyString?: string | {
+        pubkey?: string;
+        privkey: string;
+    } | {
+        pubkey: string;
+        privkey?: string;
+    });
     pubkey(): string;
     privkey(): string;
     canSign(): boolean;
