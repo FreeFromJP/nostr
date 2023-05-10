@@ -7,7 +7,7 @@ import { now } from '../core/utils/Misc'
 import Note from '../model/Note'
 import { sortDesc } from './Alignment'
 import NostrClient from './NostrClient'
-import { Repost } from './Repost'
+import Repost from './Repost'
 
 export type FollowingItem = Note | Repost
 

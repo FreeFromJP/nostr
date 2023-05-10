@@ -1,3 +1,7 @@
+/**
+ * return `now()` in unit *seconds*, and use `floor` to round down to an integer
+ * @returns current timestamp in seconds
+ */
 export declare function now(): number;
 export type TagValue = readonly string[];
 export declare function getOptionalTagValueByName<T extends readonly string[]>(eventTags: readonly string[][], ...tagNameList: T): {

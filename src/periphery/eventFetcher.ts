@@ -84,3 +84,12 @@ export async function fetchReactions(client: NostrClient, eventId: string): Prom
     }
     return await client.fetch([filter])
 }
+
+export async function fetchContactsLikeMe(client: NostrClient, pubkeyRaw: string): Promise<Contact[]> {
+    const filter: Filter = {
+        kinds: [KnownEventKind.CONTACT],
+        '#p': [pubkeyRaw],
+    }
+    const results = await client.fetch([filter])
+    return results.map((c) => Contact.from(c))
+}

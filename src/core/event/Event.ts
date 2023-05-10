@@ -4,6 +4,7 @@ import { Keys } from '../account/Keys'
 import { now } from '../utils/Misc'
 
 export { Event as EventFinalized }
+
 //for reference
 export const KnownEventKind = {
     METADATA: 0,
@@ -27,7 +28,9 @@ export interface mod {
     (eventObj: BaseEvent, ...opts: any): Promise<void>
 }
 
-//this can be used to build new event or receive incoming event
+/**
+ * this can be used to build new event or receive incoming event
+ */
 export class BaseEvent {
     id: string
     pubkey: string
@@ -37,9 +40,15 @@ export class BaseEvent {
     content: string
     sig: string
 
+    /**
+     * create a new empty `BaseEvent` when argument is undefined,
+     * create `BaseEvent` from existing `Event` json object when argument not null.
+     * throw `Error` if argument is invalid, e.g.: signature invalid
+     * @param event optional `nostr-tools` event object
+     */
     constructor(event?: Event) {
         if (event && event.sig) {
-            if (!validate(event)) throw new Error('pares error!')
+            if (!validate(event)) throw new Error('[new BaseEvent] parameter error!')
             this.id = event.id
             this.pubkey = event.pubkey
             this.created_at = event.created_at

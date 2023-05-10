@@ -1,49 +1,77 @@
 import { getOptionalTagValueByName, getRequiredFirstTagValue, TagValue } from 'src/core/utils/Misc'
 
-import { EventFinalized, KnownEventKind } from '../core/event/Event'
+import { BaseEvent, EventFinalized, KnownEventKind } from '../core/event/Event'
 
-interface BadgeImageInfo {
+/**
+ * Badge Image & Thumb, URL and dimension
+ */
+export class BadgeImage {
     url: string
     width?: number
     height?: number
-}
 
-interface BadgeDefinitionInitOptions {
-    name?: string
-    description?: string
-    highResImage?: BadgeImageInfo
-    thumbList: BadgeImageInfo[]
-}
-
-const RegexImageDimension = /^(\d+)x(\d+)$/
-
-const tagValueToBadgeImageInfo = (tagValue: TagValue): BadgeImageInfo => {
-    // image tag whose value is the URL of a high-resolution image representing the badge.
-    // The second value optionally specifies the dimensions of the image as widthxheight in pixels.
-    // Badge recommended dimensions is 1024x1024 pixels.
-    if (tagValue.length < 1) {
-        throw new Error('badge image should at least have one image URL field')
-    }
-    // NOTE: validate URL? starting with http/https?
-    const r: BadgeImageInfo = { url: tagValue[0] }
-    const imageSize = tagValue[1]
-    if (typeof imageSize === 'string') {
-        const match = imageSize.match(RegexImageDimension)
-        if (match) {
-            r.width = parseInt(match[1])
-            r.height = parseInt(match[2])
+    constructor(url: string, width?: number, height?: number) {
+        this.url = url
+        if (width !== undefined && height !== undefined) {
+            this.width = Math.floor(width)
+            this.height = Math.floor(height)
         }
     }
-    return r
+
+    static RegexImageDimension = /^(\d+)x(\d+)$/
+
+    /**
+     * parse from `TagValue`
+     * @param tagValue note: without the leading tag name
+     * @returns BadgeImage on success, otherwise undefined
+     */
+    static fromTagValue(tagValue: TagValue): BadgeImage | undefined {
+        if (tagValue.length < 1) {
+            // throw new Error('badge image should at least have one image URL field')
+            return undefined
+        }
+        // NOTE: validate URL? starting with http/https?
+        const res: BadgeImage = new BadgeImage(tagValue[0])
+
+        const imageSize = tagValue[1]
+        if (typeof imageSize === 'string') {
+            const match = imageSize.match(BadgeImage.RegexImageDimension)
+            if (match) {
+                res.width = parseInt(match[1])
+                res.height = parseInt(match[2])
+            }
+        }
+        return res
+    }
+
+    /**
+     * convert url & w/h to string array according to NIP-58
+     * @returns to `TagValue` (`string[]`), only the slice after the tag name
+     */
+    toTagValue(): TagValue {
+        const tag = [this.url]
+        if (this.width !== undefined && this.height !== undefined) {
+            const w = Math.floor(this.width)
+            const h = Math.floor(this.height)
+            tag.push(`${w}x${h}`)
+        }
+        return tag
+    }
 }
+
+export interface BadgeDefinitionOptionalFields {
+    name?: string
+    description?: string
+    image?: BadgeImage
+    thumbList?: BadgeImage[]
+}
+
 export class BadgeDefinition {
     id: string
     name?: string
     description?: string
-    highResImage?: BadgeImageInfo
-    thumbList: BadgeImageInfo[] = []
-
-    // TODO add more field like npub?
+    highResImage?: BadgeImage
+    thumbList: BadgeImage[] = []
 
     static TagRequiredUniqueName = 'd'
     static TagOptionalShortName = 'name'
@@ -51,7 +79,7 @@ export class BadgeDefinition {
     static TagOptionalDescription = 'description'
     static TagOptionalThumb = 'thumb'
 
-    constructor(id: string, options?: BadgeDefinitionInitOptions) {
+    constructor(id: string, options?: BadgeDefinitionOptionalFields) {
         this.id = id
         if (options !== null && options !== undefined) {
             // TODO change to idiomatic style in ts/js
@@ -61,8 +89,8 @@ export class BadgeDefinition {
             if (typeof options.description === 'string') {
                 this.description = options.description
             }
-            if (options.highResImage !== null && options.highResImage !== undefined) {
-                this.highResImage = options.highResImage
+            if (options.image !== null && options.image !== undefined) {
+                this.highResImage = options.image
             }
             if (options.thumbList !== null && options.thumbList !== undefined) {
                 this.thumbList = options.thumbList
@@ -75,17 +103,17 @@ export class BadgeDefinition {
      * @param event nostr event
      * @returns BadgeDefinition if input event confirm spec, otherwise undefined
      */
-    static fromEvent(event: EventFinalized): BadgeDefinition | undefined {
-        // TODO parse more loosely?
+    static from(event: EventFinalized): BadgeDefinition | undefined {
         if (event.kind !== KnownEventKind.BADGE_DEFINATION) {
-            throw new Error('[parameter error] expecting event kind BADGE_DEFINATION (30009)')
+            // throw new Error('[parameter error] expecting event kind BADGE_DEFINATION (30009)')
+            return undefined
         }
 
         try {
             const eventTags = event.tags
             const id = getRequiredFirstTagValue(eventTags, BadgeDefinition.TagRequiredUniqueName)
 
-            const [name, desc, image, thumb] = getOptionalTagValueByName(
+            const [nameTagValue, descTagValue, imageTagValue, thumbTagValue] = getOptionalTagValueByName(
                 eventTags,
                 BadgeDefinition.TagOptionalShortName,
                 BadgeDefinition.TagOptionalDescription,
@@ -93,16 +121,18 @@ export class BadgeDefinition {
                 BadgeDefinition.TagOptionalThumb,
             )
             const result = new BadgeDefinition(id, {
-                thumbList: thumb.map((tagValue) => tagValueToBadgeImageInfo(tagValue)),
+                thumbList: thumbTagValue
+                    .map((tagValue) => BadgeImage.fromTagValue(tagValue))
+                    .filter((v): v is BadgeImage => v !== undefined), // type guard in TS
             })
-            if (name.length > 0) {
-                result.name = name[0][0]
+            if (nameTagValue.length > 0) {
+                result.name = nameTagValue[0][0]
             }
-            if (desc.length > 0) {
-                result.description = desc[0][0]
+            if (descTagValue.length > 0) {
+                result.description = descTagValue[0][0]
             }
-            if (image.length > 0) {
-                result.highResImage = tagValueToBadgeImageInfo(image[0])
+            if (imageTagValue.length > 0) {
+                result.highResImage = BadgeImage.fromTagValue(imageTagValue[0])
             }
             return result
         } catch (e) {
@@ -111,7 +141,29 @@ export class BadgeDefinition {
             return undefined
         }
     }
-}
 
-// export class BadgeAward { constructor() {} }
-// export class ProfileBadge {}
+    toUnsignedEvent(): BaseEvent {
+        const event = new BaseEvent()
+
+        event.kind = KnownEventKind.BADGE_DEFINATION
+
+        const eTags = event.tags
+
+        eTags.push([BadgeDefinition.TagRequiredUniqueName, this.id])
+        // note: tags are ordered
+        if (typeof this.name === 'string') {
+            eTags.push([BadgeDefinition.TagOptionalShortName, this.name])
+        }
+        if (typeof this.description === 'string') {
+            eTags.push([BadgeDefinition.TagOptionalDescription, this.description])
+        }
+        if (this.highResImage !== undefined && typeof this.highResImage.url === 'string') {
+            eTags.push([BadgeDefinition.TagOptionalImage, ...this.highResImage.toTagValue()])
+        }
+        this.thumbList.forEach((value) => {
+            eTags.push([BadgeDefinition.TagOptionalThumb, ...value.toTagValue()])
+        })
+
+        return event
+    }
+}

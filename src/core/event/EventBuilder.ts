@@ -53,10 +53,10 @@ export async function toReply(event: BaseEvent, referEvent: BaseEvent, content: 
 //kind-2 todo: recommend relay
 
 //kind-3 contact, using nip-02 and conventional relays recording in content
-export type relayInfo = { [url: string]: { read: boolean; write: boolean } }
-export type contacts = [p: string, pubkeyRaw: string, mainRelay?: string, petname?: string][]
+export type RelayInfo = { [url: string]: { read: boolean; write: boolean } }
+export type Contacts = [p: string, pubkeyRaw: string, mainRelay?: string, petname?: string][]
 
-export async function toContact(event: BaseEvent, relays: relayInfo, contacts: contacts) {
+export async function toContact(event: BaseEvent, relays: RelayInfo, contacts: Contacts) {
     event.kind = KnownEventKind.CONTACT
     event.content = JSON.stringify(relays)
     const tags = contacts.map((c) => {
@@ -110,6 +110,7 @@ export async function toReaction(event: BaseEvent, orgEvent: EventFinalized, emo
         .concat([['p', orgEvent.pubkey]])
 }
 
+//-- this is deprecated
 //add mention in content, using NIP-27, only support @profile now
 export async function addMentionProfile(
     event: BaseEvent,
@@ -120,4 +121,33 @@ export async function addMentionProfile(
     const nprofile = 'nostr:' + nip19.nprofileEncode({ pubkey: pubkeyRaw, relays: relays })
     event.content = event.content.slice(0, insertPosition) + ' ' + nprofile + ' ' + event.content.slice(insertPosition)
     event.tags.push(['p', pubkeyRaw, '', 'mention'])
+}
+
+/**
+badge definition example:
+        tags: [
+            ['d', 'Public Sponsor'],
+            ['name', 'Medal of Bravery'],
+            ['description', 'Awarded to users demonstrating bravery'],
+            ['image', 'https://nostr.academy/awards/bravery.png', '1024x1024'],
+            ['thumb', 'https://nostr.academy/awards/bravery_256x256.png', '256x256'],
+            ['thumb', 'https://nostr.academy/awards/bravery_128x128.png',  '128x128'],
+        ],
+ */
+export async function toBadgeDefinition(
+    event: BaseEvent,
+    def: string, //unique name
+    name: string, //short name,
+    description: string,
+    image: [string, string, string],
+    thumb: [string, string, string][],
+) {
+    event.kind = KnownEventKind.BADGE_DEFINATION
+    event.tags.push(['d', def])
+    event.tags.push(['name', name])
+    event.tags.push(['description', description])
+    event.tags.push(image)
+    for (const t of thumb) {
+        event.tags.push(t)
+    }
 }
