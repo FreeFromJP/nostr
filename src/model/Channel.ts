@@ -9,8 +9,8 @@ export default class Channel {
         name: string
         about: string
         picture: string
+        creator: string
         id?: string
-        pubkey?: string
         relay?: string
         lastUpdatedAt?: number
         extra?: { [x: string]: any }
@@ -22,6 +22,7 @@ export default class Channel {
         opts.extra && (this.extra = opts.extra)
 
         this.id = opts.id || ''
+        this.creator = opts.creator
         this.relay = opts.relay || ''
         this.lastUpdatedAt = opts.lastUpdatedAt || now()
     }
@@ -33,11 +34,11 @@ export default class Channel {
 
     id = ''
     relay = ''
-    pubkey?: string
+    creator: string
     lastUpdatedAt: number
 
     static from(event40: Event, event41s?: Event[]): Channel {
-        const pubkey = event40.pubkey
+        const creator = event40.pubkey
         const id = event40.id
 
         let last: Event | undefined = undefined
@@ -45,7 +46,7 @@ export default class Channel {
         if (event41s) {
             last = event41s
                 .filter((e) => {
-                    if (e.pubkey !== pubkey) {
+                    if (e.pubkey !== creator) {
                         return false
                     }
                     const eid = e.tags.find((t) => t[0] === 'e')?.[1]
@@ -65,7 +66,7 @@ export default class Channel {
         const { name, about, picture, ...extra } = Channel.parseContent(content)
         return new Channel({
             id,
-            pubkey,
+            creator,
             name,
             about,
             picture,
@@ -91,7 +92,7 @@ export default class Channel {
         }
     }
 
-    toUnsignedEvent(kind: Kind.ChannelCreation | Kind.ChannelMetadata = Kind.ChannelMetadata): BaseEvent {
+    toUnsignedEvent(): BaseEvent {
         const content = JSON.stringify({
             name: this.name,
             about: this.about,
@@ -99,7 +100,7 @@ export default class Channel {
             ...this.extra,
         })
 
-        if (kind === Kind.ChannelCreation) {
+        if (!this.id) {
             const event = new BaseEvent({
                 kind: Kind.ChannelCreation,
                 tags: [] as string[][],
@@ -109,9 +110,6 @@ export default class Channel {
             return event
         }
 
-        if (!this.id) {
-            throw new Error('id is required')
-        }
         const tags = [['e', this.id, this.relay]]
 
         const event = new BaseEvent({
