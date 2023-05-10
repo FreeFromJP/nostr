@@ -1,14 +1,6 @@
 import { Keys } from 'src/core/account/Keys'
 import { BaseEvent } from 'src/core/event/Event'
-import {
-    addMentionProfile,
-    contacts,
-    relayInfo,
-    toContact,
-    toDM,
-    toMetadata,
-    toNote,
-} from 'src/core/event/EventBuilder'
+import { addMentionProfile, toContact, toDM, toMetadata, toNote } from 'src/core/event/EventBuilder'
 import { MetaOpts } from 'src/core/event/EventBuilder'
 import { toReaction, toRepost } from 'src/core/event/EventBuilder'
 import { now } from 'src/core/utils/Misc'

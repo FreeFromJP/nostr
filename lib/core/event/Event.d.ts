@@ -20,6 +20,9 @@ export type Tags = Tag[];
 export interface mod {
     (eventObj: BaseEvent, ...opts: any): Promise<void>;
 }
+/**
+ * this can be used to build new event or receive incoming event
+ */
 export declare class BaseEvent {
     id: string;
     pubkey: string;
@@ -28,6 +31,12 @@ export declare class BaseEvent {
     tags: Tags;
     content: string;
     sig: string;
+    /**
+     * create a new empty `BaseEvent` when argument is undefined,
+     * create `BaseEvent` from existing `Event` json object when argument not null.
+     * throw `Error` if argument is invalid, e.g.: signature invalid
+     * @param event optional `nostr-tools` event object
+     */
     constructor(event?: Event);
     get author(): string;
     hash(): void;

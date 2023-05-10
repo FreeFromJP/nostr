@@ -1,5 +1,5 @@
 import { BaseEvent, EventFinalized } from 'src/core/event/Event';
-import { contacts, relayInfo } from 'src/core/event/EventBuilder';
+import { Contacts, RelayInfo } from 'src/core/event/EventBuilder';
 type relay = {
     url: string;
     read: boolean;
@@ -14,7 +14,7 @@ export default class Contact {
     relays: relay[];
     contacts: contact[];
     lastUpdatedAt: number;
-    constructor(relays: relayInfo, contacts: contacts, lastUpdatedAt: number);
+    constructor(relays: RelayInfo, contacts: Contacts, lastUpdatedAt: number);
     static from(event: EventFinalized): Contact;
     toUnsignedEvent(): BaseEvent;
 }

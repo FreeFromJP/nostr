@@ -47,7 +47,7 @@ test('parse badge definition from event', () => {
             ['thumb', 'https://nostr.academy/awards/bravery_128x128.png'],
         ],
     }
-    const demoBadgeDef = BadgeDefinition.fromEvent(demoEvent)
+    const demoBadgeDef = BadgeDefinition.from(demoEvent)
     expect(demoBadgeDef !== undefined).toBe(true)
     expect(demoBadgeDef?.id).toBe('Public Sponsor')
     expect(demoBadgeDef?.name).toBe('Medal of Bravery')
@@ -68,7 +68,7 @@ test('parse badge definition from event', () => {
 
 test('badge definition publish', async () => {
     const demoBadgeDef = new BadgeDefinition('Starstruck')
-    const event = demoBadgeDef.toEvent()
+    const event = demoBadgeDef.toUnsignedEvent()
 
     const keys = new Keys(settings.privkeyEncoded)
     event.signByKey(keys)
@@ -84,11 +84,11 @@ test('badge definition to and from event', () => {
     expect(minimalBadgeDefinition !== undefined).toBe(true)
     expect(minimalBadgeDefinition?.id).toBe('Starstruck')
 
-    const mEvent = minimalBadgeDefinition.toEvent()
+    const mEvent = minimalBadgeDefinition.toUnsignedEvent()
     expect(mEvent.kind).toBe(KnownEventKind.BADGE_DEFINATION)
     expect(mEvent.tags).toEqual([['d', 'Starstruck']])
 
-    const bd2 = BadgeDefinition.fromEvent(mEvent)
+    const bd2 = BadgeDefinition.from(mEvent)
     expect(bd2 !== undefined).toBe(true)
     expect(bd2?.id).toBe('Starstruck')
     expect(bd2?.name).toBeUndefined()
@@ -107,7 +107,7 @@ test('badge definition to and from event', () => {
             new BadgeImage('https://nostr.academy/awards/3.png', 512, 512),
         ],
     })
-    const fev = fullBadgeDefinition.toEvent()
+    const fev = fullBadgeDefinition.toUnsignedEvent()
     fev.created_at = 1
 
     expect(fev.kind).toBe(KnownEventKind.BADGE_DEFINATION)

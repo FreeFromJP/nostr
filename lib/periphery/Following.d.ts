@@ -1,7 +1,7 @@
 import { Sub } from 'nostr-tools';
 import Note from '../model/Note';
 import NostrClient from './NostrClient';
-import { Repost } from './Repost';
+import Repost from './Repost';
 export type FollowingItem = Note | Repost;
 export default class Following {
     notes: FollowingItem[];

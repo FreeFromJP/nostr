@@ -103,7 +103,7 @@ export class BadgeDefinition {
      * @param event nostr event
      * @returns BadgeDefinition if input event confirm spec, otherwise undefined
      */
-    static fromEvent(event: EventFinalized): BadgeDefinition | undefined {
+    static from(event: EventFinalized): BadgeDefinition | undefined {
         if (event.kind !== KnownEventKind.BADGE_DEFINATION) {
             // throw new Error('[parameter error] expecting event kind BADGE_DEFINATION (30009)')
             return undefined
@@ -142,7 +142,7 @@ export class BadgeDefinition {
         }
     }
 
-    toEvent(): BaseEvent {
+    toUnsignedEvent(): BaseEvent {
         const event = new BaseEvent()
 
         event.kind = KnownEventKind.BADGE_DEFINATION
@@ -167,13 +167,3 @@ export class BadgeDefinition {
         return event
     }
 }
-
-export class BadgeAward {
-    // should use a `d` in event, or a object?
-    badge: BadgeDefinition
-
-    constructor(badgeDefinition: BadgeDefinition) {
-        this.badge = badgeDefinition
-    }
-}
-// export class ProfileBadge {}
