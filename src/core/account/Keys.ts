@@ -53,3 +53,11 @@ export class Keys {
 export function decodeKey(keyRaw: string): string {
     return nip19.decode(keyRaw).data as string
 }
+
+export function encodeNPubKey(hexKey: string): string {
+    return nip19.npubEncode(hexKey)
+}
+
+export function encodeNSecKey(hexKey: string): string {
+    return nip19.nsecEncode(hexKey)
+}

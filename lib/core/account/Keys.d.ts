@@ -11,3 +11,5 @@ export declare class Keys {
     decrypt(otherPubkeyRaw: string, content: string): Promise<string>;
 }
 export declare function decodeKey(keyRaw: string): string;
+export declare function encodeNPubKey(hexKey: string): string;
+export declare function encodeNSecKey(hexKey: string): string;
