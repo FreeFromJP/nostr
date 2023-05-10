@@ -7,8 +7,19 @@ export class Keys {
     pubkeyRaw: string
     privkeyRaw: string
     //npub or nsec
-    constructor(keyString?: string) {
-        if (keyString !== undefined) {
+    constructor(
+        keyString?:
+            | string
+            | {
+                  pubkey?: string
+                  privkey: string
+              }
+            | {
+                  pubkey: string
+                  privkey?: string
+              },
+    ) {
+        if (typeof keyString === 'string') {
             if (keyString.length !== 63) throw 'key length invalid'
             if (keyString.startsWith(PUBKEY_PREFIX)) {
                 this.pubkeyRaw = decodeKey(keyString)
@@ -19,6 +30,14 @@ export class Keys {
             } else {
                 throw 'undefine key format'
             }
+        } else if (keyString && keyString.privkey) {
+            if (keyString.privkey.length !== 64) throw 'key length invalid'
+            this.privkeyRaw = keyString.privkey
+            this.pubkeyRaw = getPublicKey(this.privkeyRaw)
+        } else if (keyString && keyString.pubkey) {
+            if (keyString.pubkey.length !== 64) throw 'key length invalid'
+            this.pubkeyRaw = keyString.pubkey
+            this.privkeyRaw = ''
         } else {
             //generate key for new user
             this.privkeyRaw = generatePrivateKey()
