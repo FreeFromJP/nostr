@@ -1,6 +1,5 @@
-import NIP10 from 'src/core/utils/Nip10'
-
 import { BaseEvent, EventFinalized } from '../core/event/Event'
+import NIP10 from '../core/utils/Nip10'
 
 export default class Note extends BaseEvent {
     nip10: NIP10

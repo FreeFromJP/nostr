@@ -1,9 +1,9 @@
 import { Filter } from 'nostr-tools'
-import Note from 'src/model/Note'
 
 import { decodeKey } from '../core/account/Keys'
 import { EventFinalized, KnownEventKind } from '../core/event/Event'
 import Contact from '../model/Contact'
+import Note from '../model/Note'
 import Profile from '../model/Profile'
 import NostrClient from './NostrClient'
 

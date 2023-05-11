@@ -1,5 +1,5 @@
-import { BaseEvent, EventFinalized, KnownEventKind } from 'src/core/event/Event'
-import { Contacts, RelayInfo, toContact } from 'src/core/event/EventBuilder'
+import { BaseEvent, EventFinalized, KnownEventKind } from '../core/event/Event'
+import { Contacts, RelayInfo, toContact } from '../core/event/EventBuilder'
 
 type relay = {
     url: string
