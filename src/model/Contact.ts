@@ -17,8 +17,9 @@ export default class Contact {
     relays: relay[] = []
     contacts: contact[] = []
     lastUpdatedAt: number
+    pubkeyRaw?: string
 
-    constructor(relays: RelayInfo, contacts: Contacts, lastUpdatedAt: number) {
+    constructor(relays: RelayInfo, contacts: Contacts, lastUpdatedAt: number, pubkeyRaw?: string) {
         //map data
         for (const [key, item] of Object.entries(relays)) {
             this.relays.push({ url: key, read: item.read, write: item.write })
@@ -29,6 +30,7 @@ export default class Contact {
             petname: x[3] ? x[3] : '',
         }))
         this.lastUpdatedAt = lastUpdatedAt
+        this.pubkeyRaw = pubkeyRaw
     }
 
     static from(event: EventFinalized) {
@@ -49,7 +51,7 @@ export default class Contact {
         } catch (e) {
             throw new Error('parse contacts error')
         }
-        return new Contact(relays, contacts, eventObj.created_at)
+        return new Contact(relays, contacts, eventObj.created_at, eventObj.author)
     }
 
     toUnsignedEvent(): BaseEvent {
