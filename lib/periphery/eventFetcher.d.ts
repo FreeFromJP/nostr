@@ -1,6 +1,6 @@
-import Note from 'src/model/Note';
 import { EventFinalized } from '../core/event/Event';
 import Contact from '../model/Contact';
+import Note from '../model/Note';
 import Profile from '../model/Profile';
 import NostrClient from './NostrClient';
 export declare function fetchProfiles(client: NostrClient, pubkeys: string[]): Promise<{

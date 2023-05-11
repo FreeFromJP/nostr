@@ -1,5 +1,5 @@
-import { BaseEvent, EventFinalized } from 'src/core/event/Event';
-import { Contacts, RelayInfo } from 'src/core/event/EventBuilder';
+import { BaseEvent, EventFinalized } from '../core/event/Event';
+import { Contacts, RelayInfo } from '../core/event/EventBuilder';
 type relay = {
     url: string;
     read: boolean;
