@@ -1,4 +1,5 @@
 import { BaseEvent, EventFinalized } from '../core/event/Event';
+import type { ParseContentItem } from '../core/utils/Misc';
 import NIP10 from '../core/utils/Nip10';
 export default class Note extends BaseEvent {
     nip10: NIP10;
@@ -6,9 +7,10 @@ export default class Note extends BaseEvent {
     parent: Note | null;
     reactions?: EventFinalized[];
     reposts: number;
+    parsedContent?: ParseContentItem[];
     constructor(event: EventFinalized, parent?: Note | null);
     addReply(reply: Note): void;
     findAncestor(): Note | null;
     traverseNotes(): Note[];
-    parseContent(): import("../core/utils/Misc").ParseContentItem[];
+    parseContent(): ParseContentItem[];
 }
