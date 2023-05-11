@@ -106,7 +106,7 @@ export type ParseContentItem =
     | { type: 'text'; content: string }
 
 export function parseContent(
-    content: string,
+    content = '',
     opts = {
         httpUrl: true,
         nostrUri: true,

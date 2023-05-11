@@ -46,6 +46,8 @@ export default class Note extends BaseEvent {
         return result
     }
     parseContent() {
+        if (this.parsedContent) return this.parsedContent
+
         const r = parseContent(this.content)
         this.parsedContent = r
         return r
