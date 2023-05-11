@@ -1,4 +1,5 @@
 import { BaseEvent, EventFinalized } from '../core/event/Event'
+import type { ParseContentItem } from '../core/utils/Misc'
 import { parseContent } from '../core/utils/Misc'
 import NIP10 from '../core/utils/Nip10'
 
@@ -10,6 +11,9 @@ export default class Note extends BaseEvent {
     //display related
     reactions?: EventFinalized[]
     reposts = 0
+
+    parsedContent?: ParseContentItem[]
+
     constructor(event: EventFinalized, parent: Note | null = null) {
         super(event)
         this.nip10 = new NIP10(event.tags)
@@ -42,6 +46,8 @@ export default class Note extends BaseEvent {
         return result
     }
     parseContent() {
-        return parseContent(this.content)
+        const r = parseContent(this.content)
+        this.parsedContent = r
+        return r
     }
 }
