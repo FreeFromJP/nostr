@@ -1,4 +1,5 @@
 import { BaseEvent, EventFinalized } from '../core/event/Event'
+import { parseContent } from '../core/utils/Misc'
 import NIP10 from '../core/utils/Nip10'
 
 export default class Note extends BaseEvent {
@@ -39,5 +40,8 @@ export default class Note extends BaseEvent {
         }
         traverse(this)
         return result
+    }
+    parseContent() {
+        return parseContent(this.content)
     }
 }
