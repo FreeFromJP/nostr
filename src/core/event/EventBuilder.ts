@@ -151,3 +151,36 @@ export async function toBadgeDefinition(
         event.tags.push(t)
     }
 }
+
+export async function toBadgeAward(
+    event: BaseEvent,
+    badgeIssuerPubkeyRaw: string,
+    def: string,
+    recipients: [p: string, pubkeyRaw: string, mainRelay?: string][],
+) {
+    event.kind = KnownEventKind.BDADE_REWARD
+    event.tags.push(['a', '' + KnownEventKind.BDADE_REWARD + ':' + badgeIssuerPubkeyRaw + ':' + def])
+    for (const r of recipients) {
+        const arr: string[] = []
+        arr.push('p')
+        arr.push(r[1])
+        if (r[2]) arr.push(r[2])
+        event.tags.push(arr)
+    }
+}
+
+export type BadgeProof = {
+    def: string
+    issuerPubkeyRaw: string
+    issueEvent: string
+    mainRelay: string //default as ''
+}
+
+export async function toBadgeProfile(event: BaseEvent, proofs: BadgeProof[]) {
+    event.kind = KnownEventKind.BADGE_PROFILE
+    event.tags.push(['d', 'profile_badges'])
+    for (const proof of proofs) {
+        event.tags.push(['a', '' + KnownEventKind.BADGE_PROFILE + ':' + proof.issuerPubkeyRaw + ':' + proof.def])
+        event.tags.push(['e', proof.issueEvent, proof.mainRelay])
+    }
+}

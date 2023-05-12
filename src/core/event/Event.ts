@@ -15,9 +15,9 @@ export const KnownEventKind = {
     DELETE: 5,
     REPOST: 6,
     REACTION: 7,
-    BADGE_PROFILE: 8,
+    BADGE_PROFILE: 30008,
     CHATROOM: 42,
-    BDADE_REWARD: 30008,
+    BDADE_REWARD: 8,
     BADGE_DEFINATION: 30009,
 }
 
