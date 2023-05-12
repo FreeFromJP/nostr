@@ -18,6 +18,7 @@ export default class Contact {
     contacts: contact[] = []
     lastUpdatedAt: number
     pubkeyRaw?: string
+    created_at: number //redundant, for sort interface
 
     constructor(relays: RelayInfo, contacts: Contacts, lastUpdatedAt: number, pubkeyRaw?: string) {
         //map data
@@ -30,6 +31,7 @@ export default class Contact {
             petname: x[3] ? x[3] : '',
         }))
         this.lastUpdatedAt = lastUpdatedAt
+        this.created_at = lastUpdatedAt
         this.pubkeyRaw = pubkeyRaw
     }
 

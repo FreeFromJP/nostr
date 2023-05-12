@@ -1,10 +1,12 @@
 import { Filter } from 'nostr-tools'
+import { now } from 'src/core/utils/Misc'
 
 import { decodeKey } from '../core/account/Keys'
 import { EventFinalized, KnownEventKind } from '../core/event/Event'
 import Contact from '../model/Contact'
 import Note from '../model/Note'
 import Profile from '../model/Profile'
+import { sortAsc } from './Alignment'
 import NostrClient from './NostrClient'
 
 export async function fetchProfiles(client: NostrClient, pubkeys: string[]): Promise<{ [pubkey: string]: Profile }> {
@@ -85,11 +87,46 @@ export async function fetchReactions(client: NostrClient, eventId: string): Prom
     return await client.fetch([filter])
 }
 
-export async function fetchContactsLikeMe(client: NostrClient, pubkeyRaw: string): Promise<Contact[]> {
+export async function fetchFollowers(
+    client: NostrClient,
+    pubkeyRaw: string,
+    until?: number,
+    limit?: number,
+): Promise<Contact[]> {
     const filter: Filter = {
         kinds: [KnownEventKind.CONTACT],
         '#p': [pubkeyRaw],
     }
+    if (until) filter.until = until
+    if (limit) filter.limit = limit
     const results = await client.fetch([filter])
     return results.map((c) => Contact.from(c))
+}
+
+export async function fetchFollowersAMAP(
+    client: NostrClient,
+    pubkeyRaw: string,
+    cb: (contracts: Contact[]) => void,
+    maxFetch = 3,
+    eachBatch?: number,
+): Promise<Contact[]> {
+    let fetchCount = 0
+    let numberAdded = 0
+    let totalContacts: Contact[] = []
+    let until = now()
+    do {
+        let results: Contact[]
+        if (eachBatch) {
+            results = sortAsc(await fetchFollowers(client, pubkeyRaw, until, eachBatch)) as Contact[]
+        } else {
+            results = sortAsc(await fetchFollowers(client, pubkeyRaw, until)) as Contact[]
+        }
+        numberAdded = results.length
+        if (numberAdded === 0) break
+        totalContacts = results.concat(totalContacts)
+        fetchCount++
+        until = results[0].created_at
+        cb(results)
+    } while (fetchCount < maxFetch && numberAdded > 0)
+    return totalContacts
 }

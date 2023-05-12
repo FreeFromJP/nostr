@@ -1,8 +1,10 @@
+import fs from 'fs'
 import { NostrClient } from 'src/index'
-import { fetchContactsLikeMe } from 'src/periphery/eventFetcher'
+import { fetchFollowersAMAP } from 'src/periphery/eventFetcher'
 import WebSocket from 'ws'
 
 import { settings } from '../testHelper/settings'
+
 global.WebSocket = WebSocket as any
 
 // test('Test fetch profiles', async () => {
@@ -26,10 +28,26 @@ global.WebSocket = WebSocket as any
 
 test('Test fetch contacts like me', async () => {
     const client = new NostrClient(settings.relays)
-    const results = await fetchContactsLikeMe(
+    const set = new Set<string>()
+    const results = await fetchFollowersAMAP(
         client,
-        '6961db6aec05b27aa1db28b96b0130e6805c357e47d731533ec4ac97e5fcbebb',
+        '3efdaebb1d8923ebd99c9e7ace3b4194ab45512e2be79c1b7d68d9243e0d2681',
+        (contacts) => {
+            console.log(contacts.length)
+            contacts.forEach((x) => {
+                set.add(x.pubkeyRaw as string)
+            })
+        },
+        50, //recommend 3
+        1000, // recmmend null
     )
-    console.log(results)
+
+    console.log('length added up:', results.length)
+
+    for (const r of results) {
+        set.add(r.pubkeyRaw as string)
+    }
+    console.log('actual record:', set.size)
     client.close()
-})
+    fs.writeFileSync('./test.test', JSON.stringify(Array.from(set)))
+}, 5000000)

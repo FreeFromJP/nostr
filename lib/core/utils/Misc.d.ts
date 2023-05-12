@@ -62,7 +62,7 @@ export type ParseContentItem = {
     type: 'text';
     content: string;
 };
-export declare function parseContent(content: string, opts?: {
+export declare function parseContent(content?: string, opts?: {
     httpUrl: boolean;
     nostrUri: boolean;
 }): ParseContentItem[];

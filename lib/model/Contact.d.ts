@@ -14,7 +14,9 @@ export default class Contact {
     relays: relay[];
     contacts: contact[];
     lastUpdatedAt: number;
-    constructor(relays: RelayInfo, contacts: Contacts, lastUpdatedAt: number);
+    pubkeyRaw?: string;
+    created_at: number;
+    constructor(relays: RelayInfo, contacts: Contacts, lastUpdatedAt: number, pubkeyRaw?: string);
     static from(event: EventFinalized): Contact;
     toUnsignedEvent(): BaseEvent;
 }
