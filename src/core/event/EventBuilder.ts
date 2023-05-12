@@ -89,6 +89,21 @@ export async function toDM(
     }
 }
 
+//kind-5 Deletion
+export async function toDelete(event: BaseEvent, myPubkeyRaw: string, orgEvents: EventFinalized[]) {
+    event.kind = KnownEventKind.DELETE
+    orgEvents.forEach((e) => {
+        if (e.pubkey === myPubkeyRaw) {
+            try {
+                new BaseEvent(e) //use validation
+                event.tags.push(['e', e.id])
+            } catch (e) {
+                //pass
+            }
+        }
+    })
+}
+
 //kind-6 repost
 export async function toRepost(event: BaseEvent, orgEvent: EventFinalized) {
     event.kind = KnownEventKind.REPOST

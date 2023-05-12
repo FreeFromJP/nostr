@@ -1,21 +1,21 @@
 import { BaseEvent, EventFinalized, KnownEventKind } from '../core/event/Event'
 import { Contacts, RelayInfo, toContact } from '../core/event/EventBuilder'
 
-type relay = {
+type RelayItem = {
     url: string
     read: boolean
     write: boolean
 }
 
-type contact = {
+type ContactItem = {
     pubkeyRaw: string
     mainRelay?: string
     petname?: string
 }
 
 export default class Contact {
-    relays: relay[] = []
-    contacts: contact[] = []
+    relays: RelayItem[] = []
+    contacts: ContactItem[] = []
     lastUpdatedAt: number
     pubkeyRaw?: string
     created_at: number //redundant, for sort interface

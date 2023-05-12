@@ -1,6 +1,6 @@
 import { Keys } from 'src/core/account/Keys'
 import { BaseEvent } from 'src/core/event/Event'
-import { addMentionProfile, toContact, toDM, toMetadata, toNote } from 'src/core/event/EventBuilder'
+import { addMentionProfile, toContact, toDelete, toDM, toMetadata, toNote } from 'src/core/event/EventBuilder'
 import { MetaOpts } from 'src/core/event/EventBuilder'
 import { toReaction, toRepost } from 'src/core/event/EventBuilder'
 import { now } from 'src/core/utils/Misc'
@@ -171,6 +171,28 @@ test('Test mention profile', async () => {
     event.modify(toNote, 'Testing, sorry to bother u: ')
     event.modify(addMentionProfile, 28, '5fd693e61a7969ecf5c11dbf5ce20aedac1cea71721755b037955994bf6061bb', [])
     event.signByKey(keys)
+    await client.publish(event)
+    await sleep(500)
+    client.close()
+})
+
+test('Test delete', async () => {
+    const client = new NostrClient(settings.relays)
+    const keys = new Keys(settings.privkeyEncoded)
+    const event = new BaseEvent()
+    event.modify(toDelete, 'f7c1fb977450392671ab594f355f28c393c7b45594b0df61dab208cd6f7a75e3', [
+        {
+            content: '😩this is bad',
+            created_at: 1683890686,
+            id: '4200e9ff51ec6ec206e9ea581676798323ab15dcf0f3d432616317f8bbe48fe9',
+            kind: 1,
+            pubkey: 'f7c1fb977450392671ab594f355f28c393c7b45594b0df61dab208cd6f7a75e3',
+            sig: '35c9d563aefffcab60274eeb5d70bf48a37d7356c2fc5b36fee587678bb5abc3740ab8375b17f472cca6b73f165f5219b4a4c566ad15dd3d51ba30ebcf19f7b0',
+            tags: [],
+        },
+    ])
+    event.signByKey(keys)
+    console.log(event)
     await client.publish(event)
     await sleep(500)
     client.close()
