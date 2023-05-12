@@ -1,6 +1,4 @@
-import type { Event } from 'nostr-tools'
-import { Kind } from 'nostr-tools'
-
+import { EventFinalized, KnownEventKind } from '../core/event/Event'
 import { BaseEvent } from '../core/event/Event'
 import { now } from '../core/utils/Misc'
 
@@ -37,11 +35,11 @@ export default class Channel {
     creator: string
     lastUpdatedAt: number
 
-    static from(event40: Event, event41s?: Event[]): Channel {
+    static from(event40: EventFinalized, event41s?: EventFinalized[]): Channel {
         const creator = event40.pubkey
         const id = event40.id
 
-        let last: Event | undefined = undefined
+        let last: EventFinalized | undefined = undefined
 
         if (event41s) {
             last = event41s
@@ -102,10 +100,10 @@ export default class Channel {
 
         if (!this.id) {
             const event = new BaseEvent({
-                kind: Kind.ChannelCreation,
+                kind: KnownEventKind.CHANNEL_CREATION,
                 tags: [] as string[][],
                 content: content,
-            } as Event)
+            } as EventFinalized)
 
             return event
         }
@@ -113,10 +111,10 @@ export default class Channel {
         const tags = [['e', this.id, this.relay]]
 
         const event = new BaseEvent({
-            kind: Kind.ChannelMetadata,
+            kind: KnownEventKind.CHANNEL_METADATA,
             tags: tags,
             content: content,
-        } as Event)
+        } as EventFinalized)
 
         return event
     }

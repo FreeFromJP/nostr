@@ -16,9 +16,12 @@ export const KnownEventKind = {
     REPOST: 6,
     REACTION: 7,
     BADGE_PROFILE: 30008,
-    CHATROOM: 42,
     BDADE_REWARD: 8,
     BADGE_DEFINATION: 30009,
+    CHANNEL_CREATION: 40,
+    CHANNEL_METADATA: 41,
+    CHANNEL_MESSAGE: 42,
+    REPORTING: 1984,
 }
 
 export type Tag = string[]

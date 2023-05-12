@@ -199,3 +199,52 @@ export async function toBadgeProfile(event: BaseEvent, proofs: BadgeProof[]) {
         event.tags.push(['e', proof.issueEvent, proof.mainRelay])
     }
 }
+
+//kind-1984 reports
+export type Reason = 'nudity' | 'profanity' | 'illegal' | 'spam' | 'impersonation'
+export type ReportType = 'profile' | 'event' | 'impersonation'
+export type ReportAccount = {
+    reportType: ReportType
+    reportPubkey: string
+    reason: Reason
+}
+export type ReportEvent = {
+    reportType: ReportType
+    reportEvent: string
+    reportPubkey: string
+    reason: Reason
+}
+export type ReportImpersonation = {
+    reportType: ReportType
+    impersonator: string
+    victim: string
+}
+export type ReportData = ReportAccount | ReportEvent | ReportImpersonation
+
+export async function toReport(event: BaseEvent, reports: ReportData[]) {
+    event.kind = KnownEventKind.REPORTING
+    reports.forEach((data) => {
+        switch (data.reportType) {
+            case 'profile':
+                {
+                    const d = data as ReportAccount
+                    event.tags.push(['p', d.reportPubkey, d.reason])
+                }
+                break
+            case 'event':
+                {
+                    const d = data as ReportEvent
+                    event.tags.push(['e', d.reason, d.reason])
+                    event.tags.push(['p', d.reportPubkey])
+                }
+                break
+            case 'impersonation':
+                {
+                    const d = data as ReportImpersonation
+                    event.tags.push(['p', d.impersonator, 'impersonation'])
+                    event.tags.push(['p', d.victim])
+                }
+                break
+        }
+    })
+}

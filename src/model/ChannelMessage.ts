@@ -1,6 +1,4 @@
-import type { Event } from 'nostr-tools'
-import { Kind } from 'nostr-tools'
-
+import { EventFinalized, KnownEventKind } from '../core/event/Event'
 import { BaseEvent } from '../core/event/Event'
 import Channel from './Channel'
 
@@ -19,8 +17,8 @@ export default class ChannelMessage extends BaseEvent {
 
         super({
             content: opts.content,
-            kind: Kind.ChannelMessage,
-        } as Event)
+            kind: KnownEventKind.CHANNEL_MESSAGE,
+        } as EventFinalized)
 
         this.channel = opts.channel
         this.replyTo = opts.replyTo
@@ -30,9 +28,9 @@ export default class ChannelMessage extends BaseEvent {
     channel: { id: string; relay: string }
     replyTo?: { pubkey: string; id: string; relay: string }
 
-    static from(event: Event): ChannelMessage | null {
-        if (event.kind !== Kind.ChannelMessage) {
-            throw new Error(`Must be an kind-${Kind.ChannelMessage}: channel message`)
+    static from(event: EventFinalized): ChannelMessage | null {
+        if (event.kind !== KnownEventKind.CHANNEL_MESSAGE) {
+            throw new Error(`Must be an kind-${KnownEventKind.CHANNEL_MESSAGE}: channel message`)
         }
 
         const channelTags = event.tags.find((t) => t[0] === 'e' && t[3] === 'root')
@@ -82,7 +80,7 @@ export default class ChannelMessage extends BaseEvent {
         }
 
         return {
-            kind: 42,
+            kind: KnownEventKind.CHANNEL_MESSAGE,
             tags,
             content: this.content,
             created_at: Date.now(),
