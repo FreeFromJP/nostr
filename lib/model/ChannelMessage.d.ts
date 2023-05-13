@@ -1,4 +1,4 @@
-import type { Event } from 'nostr-tools';
+import { EventFinalized } from '../core/event/Event';
 import { BaseEvent } from '../core/event/Event';
 import Channel from './Channel';
 export default class ChannelMessage extends BaseEvent {
@@ -17,7 +17,7 @@ export default class ChannelMessage extends BaseEvent {
         id: string;
         relay: string;
     };
-    static from(event: Event): ChannelMessage | null;
+    static from(event: EventFinalized): ChannelMessage | null;
     toUnsignedEvent(): {
         kind: number;
         tags: string[][];

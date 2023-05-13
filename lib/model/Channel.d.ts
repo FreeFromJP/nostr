@@ -1,4 +1,4 @@
-import type { Event } from 'nostr-tools';
+import { EventFinalized } from '../core/event/Event';
 import { BaseEvent } from '../core/event/Event';
 export default class Channel {
     constructor(opts: {
@@ -23,7 +23,7 @@ export default class Channel {
     relay: string;
     creator: string;
     lastUpdatedAt: number;
-    static from(event40: Event, event41s?: Event[]): Channel;
+    static from(event40: EventFinalized, event41s?: EventFinalized[]): Channel;
     static parseContent(content: string): any;
     toUnsignedEvent(): BaseEvent;
 }

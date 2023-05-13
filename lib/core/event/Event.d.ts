@@ -11,9 +11,12 @@ export declare const KnownEventKind: {
     REPOST: number;
     REACTION: number;
     BADGE_PROFILE: number;
-    CHATROOM: number;
     BDADE_REWARD: number;
     BADGE_DEFINATION: number;
+    CHANNEL_CREATION: number;
+    CHANNEL_METADATA: number;
+    CHANNEL_MESSAGE: number;
+    REPORTING: number;
 };
 export type Tag = string[];
 export type Tags = Tag[];

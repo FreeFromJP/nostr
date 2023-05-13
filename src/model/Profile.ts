@@ -26,7 +26,9 @@ export default class Profile {
         this.pubkey = pubkey
         this.lastUpdatedAt = lastUpdatedAt
         this.name = metadata.name
+        this.display_name = metadata.display_name
         this.about = metadata.about
+        this.banner = metadata.banner
         this.picture = metadata.picture
         this.nip05 = {
             url: metadata.nip05,

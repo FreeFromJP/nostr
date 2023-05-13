@@ -16,5 +16,6 @@ const someonesProfile = {
 
 test('parse profile event', async () => {
     const profile = Profile.from(someonesProfile)
+    console.log(profile)
     expect(await profile.isNip05Verified()).toBe(true)
 })
