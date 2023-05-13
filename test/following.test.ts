@@ -1,5 +1,5 @@
 import { BaseEvent } from 'src/index'
-import { toNote } from 'src/index'
+import { decodeKey, toNote } from 'src/index'
 import Following from 'src/periphery/Following'
 import NostrClient from 'src/periphery/NostrClient'
 import WebSocket from 'ws'
@@ -26,7 +26,7 @@ const keys = new Keys(settings.privkeyEncoded)
 
 test('Test digging the incoming notes', async () => {
     const client = new NostrClient(settings.relays)
-    const follow = new Following(keysToFollow)
+    const follow = new Following(keysToFollow.map((k) => decodeKey(k)))
     follow.sub4Incoming(client, console.log)
     {
         const event = new BaseEvent()

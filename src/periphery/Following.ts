@@ -1,6 +1,5 @@
 import { Filter, Sub } from 'nostr-tools'
 
-import { decodeKey } from '../core/account/Keys'
 import { KnownEventKind } from '../core/event/Event'
 import { EventFinalized } from '../core/event/Event'
 import { now } from '../core/utils/Misc'
@@ -28,7 +27,7 @@ export default class Following {
 
     //accept encoded keys
     constructor(followings: string[]) {
-        this.followingPubkeysRaw = followings.map((k) => decodeKey(k))
+        this.followingPubkeysRaw = followings
     }
 
     /**
