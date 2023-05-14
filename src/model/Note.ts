@@ -45,14 +45,23 @@ export default class Note extends BaseEvent {
         traverse(this)
         return result
     }
-    parseContent() {
+    parseContent(
+        opts = {
+            httpUrl: true,
+            nostrUri: true,
+            tag: false,
+        },
+    ) {
         if (this.parsedContent) return this.parsedContent
 
         const content = normolizeContent(this)
-        const r = parseContent({
-            content,
-            tags: this.tags,
-        })
+        const r = parseContent(
+            {
+                content,
+                tags: this.tags,
+            },
+            opts,
+        )
         this.parsedContent = r
         return r
     }
