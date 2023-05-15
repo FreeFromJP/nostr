@@ -35,6 +35,7 @@ export default class NIP10 {
                         switch (m) {
                             case 'root':
                                 this.root = k
+                                if (!this.refer) this.refer = k
                                 break
                             case 'mention':
                                 this.memtions.push(k)

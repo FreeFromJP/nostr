@@ -1,5 +1,5 @@
 import { BaseEvent, EventFinalized } from '../core/event/Event';
-import type { ParseContentItem } from '../core/utils/Misc';
+import { ParseContentItem } from '../core/utils/Misc';
 import NIP10 from '../core/utils/Nip10';
 export default class Note extends BaseEvent {
     nip10: NIP10;
@@ -12,5 +12,9 @@ export default class Note extends BaseEvent {
     addReply(reply: Note): void;
     findAncestor(): Note | null;
     traverseNotes(): Note[];
-    parseContent(): ParseContentItem[];
+    parseContent(opts?: {
+        httpUrl: boolean;
+        nostrUri: boolean;
+        tag: boolean;
+    }): ParseContentItem[];
 }

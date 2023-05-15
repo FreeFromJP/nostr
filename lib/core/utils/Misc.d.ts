@@ -1,3 +1,4 @@
+import type { Event } from 'nostr-tools';
 import type { AddressPointer, EventPointer, ProfilePointer } from 'nostr-tools/lib/nip19';
 /**
  * return `now()` in unit *seconds*, and use `floor` to round down to an integer
@@ -59,10 +60,20 @@ export type ParseContentItem = {
     content: string;
     url: string;
 } | {
+    type: 'tag';
+    content: string;
+    data: string;
+} | {
     type: 'text';
     content: string;
 };
-export declare function parseContent(content?: string, opts?: {
+export declare function parseContent(event: Pick<Event, 'content' | 'tags'>, opts?: {
     httpUrl: boolean;
     nostrUri: boolean;
+    tag: boolean;
 }): ParseContentItem[];
+/**
+ * normalize content
+ * 将content中的 #[n] 替换为对应的 nip19 profile
+ */
+export declare function normolizeContent(event: Pick<Event, 'content' | 'tags'>): string;
