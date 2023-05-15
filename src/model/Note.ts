@@ -1,5 +1,5 @@
 import { BaseEvent, EventFinalized } from '../core/event/Event'
-import type { ParseContentItem } from '../core/utils/Misc'
+import { normolizeContent, ParseContentItem } from '../core/utils/Misc'
 import { parseContent } from '../core/utils/Misc'
 import NIP10 from '../core/utils/Nip10'
 
@@ -45,10 +45,23 @@ export default class Note extends BaseEvent {
         traverse(this)
         return result
     }
-    parseContent() {
+    parseContent(
+        opts = {
+            httpUrl: true,
+            nostrUri: true,
+            tag: false,
+        },
+    ) {
         if (this.parsedContent) return this.parsedContent
 
-        const r = parseContent(this.content)
+        const content = normolizeContent(this)
+        const r = parseContent(
+            {
+                content,
+                tags: this.tags,
+            },
+            opts,
+        )
         this.parsedContent = r
         return r
     }

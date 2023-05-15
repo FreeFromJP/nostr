@@ -1,3 +1,4 @@
+import type { Event } from 'nostr-tools'
 import { nip19, nip27 } from 'nostr-tools'
 import type { AddressPointer, EventPointer, ProfilePointer } from 'nostr-tools/lib/nip19'
 import { filter, includes, map, tail } from 'ramda'
@@ -103,15 +104,19 @@ export type ParseContentItem =
     | { type: 'link'; content: string; url: string }
     | { type: 'video'; content: string; url: string }
     | { type: 'audio'; content: string; url: string }
+    | { type: 'tag'; content: string; data: string }
     | { type: 'text'; content: string }
 
 export function parseContent(
-    content = '',
+    event: Pick<Event, 'content' | 'tags'>,
     opts = {
         httpUrl: true,
         nostrUri: true,
+        tag: true,
     },
 ): ParseContentItem[] {
+    const content = event.content
+
     const patterns = []
     if (opts.httpUrl) {
         patterns.push({
@@ -140,6 +145,22 @@ export function parseContent(
             },
         })
     }
+    if (opts.tag) {
+        const tags = event.tags.filter((t) => t[0] === 't').map((t) => t[1])
+        const s = tags.join('|')
+        const regex = new RegExp(`\\B#(${s})\\b`, 'gi')
+
+        patterns.push({
+            pattern: regex,
+            renderText: (text: string, m: string[]) => {
+                return {
+                    type: 'tag',
+                    content: text,
+                    data: m[1].toLowerCase(),
+                }
+            },
+        })
+    }
 
     const textExtraction = new TextExtraction(content, patterns)
 
@@ -157,4 +178,58 @@ export function parseContent(
     })
 
     return result
+}
+
+/**
+ * normalize content
+ * 将content中的 #[n] 替换为对应的 nip19 profile
+ */
+export function normolizeContent(event: Pick<Event, 'content' | 'tags'>): string {
+    const content = event.content
+    const tags = event.tags
+
+    const hasPubkey = tags.find((t) => t[0] === 'p')
+    if (!hasPubkey) return content
+
+    const patterns = [
+        {
+            pattern: /\B#\[(\d+)\]\B/gi,
+            renderText: (text: string, m: string[]) => {
+                const index = Number(m[1])
+                const [type, pubkey, relay] = tags[index]
+
+                if (type !== 'p') {
+                    return {
+                        type: 'text',
+                        content: text,
+                    }
+                }
+
+                const nprofile = nip19.nprofileEncode({
+                    pubkey: pubkey,
+                    relays: relay ? [relay] : undefined,
+                })
+
+                return {
+                    type: 'pubkey',
+                    content: `nostr:${nprofile}`,
+                }
+            },
+        },
+    ]
+
+    const textExtraction = new TextExtraction(content, patterns)
+    const result = textExtraction.parse().map((el) => {
+        // @ts-ignore
+        const data = el.children
+
+        if (typeof data === 'string') {
+            return {
+                type: 'text',
+                content: data,
+            } as ParseContentItem
+        }
+        return data as ParseContentItem
+    })
+    return result.map((r) => r.content).join('')
 }
