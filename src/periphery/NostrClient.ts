@@ -44,6 +44,10 @@ export default class NostrClient {
         return p
     }
 
+    get(filter: Filter, opts?: SubscriptionOptions): Promise<Event | null> {
+        return this.pool.get(this.relays, filter, opts)
+    }
+
     fetch(filters: Filter[], opts?: SubscriptionOptions): Promise<Event[]> {
         return this.pool.list(this.relays, filters, opts)
     }

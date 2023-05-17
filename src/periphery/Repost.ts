@@ -29,8 +29,8 @@ export default class Repost extends BaseEvent {
                 ids: [orgEventId],
                 limit: 1,
             }
-            const result = (await client.fetch([filter]))[0] as EventFinalized
-            if (result.kind !== 1) return
+            const result = await client.get(filter)
+            if (!result || result.kind !== 1) return
             this.orgNote = new Note(result)
         } catch (e) {
             throw new Error('Error fetching original event of this repost')
